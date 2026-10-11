@@ -5,7 +5,6 @@ import {
   CheckCircle2Icon,
   CompassIcon,
   GraduationCapIcon,
-  PlaneTakeoffIcon,
   RadioIcon,
   ShieldCheckIcon,
   SparklesIcon,
