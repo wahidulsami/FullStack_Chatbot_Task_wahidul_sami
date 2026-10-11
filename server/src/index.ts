@@ -1,16 +1,15 @@
 import "dotenv/config"
-import express from "express"
-
-const app = express()
-
-app.use(express.json())
-
-app.get("/api/health", (_req, res) => {
-  res.json({ status: "ok" })
-})
+import connectDB from "./config/db"
+import { app } from "./app"
 
 const PORT = process.env.PORT || 5000
 
-app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`)
-})
+connectDB()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server listening on port ${PORT}`)
+    })
+  })
+  .catch((error) => {
+    console.error("Failed to connect to the database:", error)
+  })
