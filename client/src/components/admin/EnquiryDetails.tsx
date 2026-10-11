@@ -24,11 +24,13 @@ const COLLAPSED_MESSAGE_CHARS = 240
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="grid gap-1 py-2 sm:grid-cols-[130px_1fr] sm:gap-4">
-      <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+    <div className="grid gap-1 py-2 sm:grid-cols-[130px_minmax(0,1fr)] sm:gap-4 min-w-0">
+      <dt className="text-xs font-bold uppercase tracking-wider text-muted-foreground shrink-0">
         {label}
       </dt>
-      <dd className="text-sm break-words text-foreground">{value}</dd>
+      <dd className="text-sm break-all [overflow-wrap:anywhere] min-w-0 text-foreground font-medium">
+        {value}
+      </dd>
     </div>
   )
 }
@@ -58,8 +60,9 @@ export default function EnquiryDetails({
   useEffect(() => {
     if (!expanded) return
     const el = messageRef.current
-    if (!el) return
-    el.scrollIntoView({ block: "nearest" })
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "nearest" })
+    }
   }, [expanded])
 
   // Character count is the reliable trigger; DOM overflow is a bonus check.
@@ -67,13 +70,17 @@ export default function EnquiryDetails({
 
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-2xl">
-        <DialogHeader>
-          <DialogTitle className="font-heading pr-8">{enquiry.name}</DialogTitle>
-          <DialogDescription>{enquiry.email}</DialogDescription>
+      <DialogContent className="max-h-[85vh] overflow-y-auto overflow-x-hidden sm:max-w-2xl rounded-[2rem] border border-border bg-card p-6 sm:p-8 shadow-2xl min-w-0">
+        <DialogHeader className="space-y-1 min-w-0">
+          <DialogTitle className="font-heading text-xl sm:text-2xl font-bold text-foreground pr-8 break-all [overflow-wrap:anywhere]">
+            {enquiry.name}
+          </DialogTitle>
+          <DialogDescription className="text-xs font-medium text-muted-foreground break-all [overflow-wrap:anywhere]">
+            {enquiry.email}
+          </DialogDescription>
         </DialogHeader>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3 pt-1">
           <StatusDropdown
             value={enquiry.status}
             pending={pending}
@@ -84,30 +91,30 @@ export default function EnquiryDetails({
           </span>
         </div>
 
-        <Separator />
+        <Separator className="my-2" />
 
-        <dl>
+        <dl className="divide-y divide-border/40 min-w-0">
           <Row label="Phone" value={enquiry.phone} />
           <Row label="Type" value={enquiry.userType} />
           <Row label="Interest" value={enquiry.interest} />
           <Row label="Last updated" value={new Date(enquiry.updatedAt).toLocaleString()} />
         </dl>
 
-        <div>
+        <div className="space-y-2 pt-2 min-w-0">
           <div className="flex items-center justify-between gap-2">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              Message
+            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              Submitted Message
             </p>
-            <span className="text-xs text-muted-foreground">
-              {enquiry.message.length} characters
+            <span className="text-xs text-muted-foreground font-mono">
+              {enquiry.message.length} chars
             </span>
           </div>
 
-          <div className="relative mt-2">
+          <div className="relative mt-2 min-w-0 max-w-full">
             <p
               ref={messageRef}
               className={cn(
-                "rounded-lg bg-muted p-4 text-sm break-words whitespace-pre-wrap text-foreground",
+                "rounded-2xl border border-border/60 bg-muted/50 p-4 text-sm break-all [overflow-wrap:anywhere] whitespace-pre-wrap text-foreground leading-relaxed min-w-0 max-w-full",
                 !expanded && "max-h-40 overflow-hidden"
               )}
             >
@@ -115,7 +122,7 @@ export default function EnquiryDetails({
             </p>
 
             {!expanded && needsToggle && (
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 rounded-b-lg bg-gradient-to-t from-muted to-transparent" />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-14 rounded-b-2xl bg-gradient-to-t from-muted/90 to-transparent" />
             )}
           </div>
 
@@ -123,17 +130,17 @@ export default function EnquiryDetails({
             <Button
               variant="outline"
               size="sm"
-              className="mt-2"
+              className="mt-2 rounded-full text-xs"
               onClick={() => setExpanded((value) => !value)}
             >
               {expanded ? (
                 <>
-                  <ChevronUpIcon />
+                  <ChevronUpIcon className="size-3.5 mr-1" />
                   Show less
                 </>
               ) : (
                 <>
-                  <ChevronDownIcon />
+                  <ChevronDownIcon className="size-3.5 mr-1" />
                   Show more
                 </>
               )}

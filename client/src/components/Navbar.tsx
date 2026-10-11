@@ -1,4 +1,11 @@
-import { LayoutDashboardIcon, LogOutIcon, PlaneTakeoffIcon } from "lucide-react"
+import { useState } from "react"
+import {
+  LayoutDashboardIcon,
+  LogOutIcon,
+  MenuIcon,
+  PlaneTakeoffIcon,
+  XIcon,
+} from "lucide-react"
 import { Link, NavLink, useNavigate } from "react-router-dom"
 import ThemeToggle from "@/components/ThemeToggle"
 import { Button } from "@/components/ui/button"
@@ -16,9 +23,11 @@ export default function Navbar() {
   const dispatch = useAppDispatch()
   const { user, status } = useAppSelector((state) => state.auth)
   const navigate = useNavigate()
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const handleLogout = async () => {
     await dispatch(logout())
+    setMobileMenuOpen(false)
     navigate("/")
   }
 
@@ -28,6 +37,7 @@ export default function Navbar() {
         {/* Brand Logo */}
         <Link
           to="/"
+          onClick={() => setMobileMenuOpen(false)}
           className="group flex items-center gap-2.5 font-heading text-sm sm:text-base font-bold tracking-tight text-foreground transition-opacity hover:opacity-90"
         >
           <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-xs transition-transform group-hover:scale-105">
@@ -35,12 +45,12 @@ export default function Navbar() {
           </span>
           <span className="flex items-center gap-1.5">
             <span>DroneTV</span>
-            <span className="text-muted-foreground font-medium">Academy</span>
+            <span className="text-muted-foreground font-medium hidden xs:inline">Academy</span>
             <span className="size-1.5 rounded-full bg-primary" />
           </span>
         </Link>
 
-        {/* Navigation Links */}
+        {/* Desktop Navigation Links */}
         <nav className="hidden md:flex items-center gap-1 bg-muted/40 p-1 rounded-full border border-border/50">
           {links.map((link) => (
             <NavLink
@@ -60,8 +70,8 @@ export default function Navbar() {
           ))}
         </nav>
 
-        {/* Actions & Admin */}
-        <div className="flex items-center gap-2">
+        {/* Desktop Actions & Admin */}
+        <div className="hidden md:flex items-center gap-2">
           <ThemeToggle />
           {status === "authenticated" && user ? (
             <>
@@ -94,7 +104,80 @@ export default function Navbar() {
             </Button>
           )}
         </div>
+
+        {/* Mobile & Tablet Toggle Button */}
+        <div className="flex md:hidden items-center gap-1.5">
+          <ThemeToggle />
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => setMobileMenuOpen((v) => !v)}
+            aria-label="Toggle navigation menu"
+            className="rounded-full text-foreground hover:bg-muted"
+          >
+            {mobileMenuOpen ? <XIcon className="size-5" /> : <MenuIcon className="size-5" />}
+          </Button>
+        </div>
       </div>
+
+      {/* Mobile & Tablet Dropdown Drawer */}
+      {mobileMenuOpen && (
+        <div className="md:hidden mt-2 mx-auto max-w-6xl rounded-[1.8rem] p-1.5 bg-muted/40 border border-border shadow-2xl backdrop-blur-xl animate-bubble-in">
+          <div className="rounded-[calc(1.8rem-0.375rem)] bg-card border border-border/40 p-4 space-y-3">
+            <nav className="flex flex-col gap-1">
+              {links.map((link) => (
+                <NavLink
+                  key={link.to}
+                  to={link.to}
+                  end={link.to === "/"}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={({ isActive }) =>
+                    `flex items-center justify-between rounded-xl px-4 py-2.5 text-sm font-medium transition-all ${
+                      isActive
+                        ? "bg-primary/15 text-primary font-bold"
+                        : "text-foreground/80 hover:bg-muted hover:text-foreground"
+                    }`
+                  }
+                >
+                  <span>{link.label}</span>
+                  <span className="text-xs text-muted-foreground">→</span>
+                </NavLink>
+              ))}
+            </nav>
+
+            <div className="pt-2 border-t border-border/50 flex items-center justify-between">
+              {status === "authenticated" && user ? (
+                <div className="flex items-center justify-between w-full gap-2">
+                  <Button
+                    render={<Link to="/admin" />}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex-1 rounded-full bg-primary text-primary-foreground font-semibold text-xs"
+                  >
+                    <LayoutDashboardIcon className="size-3.5 mr-1" />
+                    Admin Dashboard
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => void handleLogout()}
+                    className="rounded-full text-xs"
+                  >
+                    Logout
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  render={<Link to="/admin/login" />}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full rounded-full bg-primary text-primary-foreground font-semibold text-xs py-2 shadow-xs"
+                >
+                  Admin Login
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   )
 }

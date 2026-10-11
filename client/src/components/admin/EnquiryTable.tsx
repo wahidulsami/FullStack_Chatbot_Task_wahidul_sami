@@ -1,4 +1,4 @@
-import { EyeIcon, RefreshCwIcon, Trash2Icon } from "lucide-react"
+import { CalendarIcon, EyeIcon, MailIcon, PhoneIcon, RefreshCwIcon, Trash2Icon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import {
@@ -43,9 +43,9 @@ export default function EnquiryTable({
 }: EnquiryTableProps) {
   if (loading) {
     return (
-      <div className="space-y-3 rounded-xl border border-border bg-card p-6">
-        {[0, 1, 2].map((row) => (
-          <Skeleton key={row} className="h-12 w-full" />
+      <div className="space-y-3 p-4 sm:p-6">
+        {[0, 1, 2, 3].map((row) => (
+          <Skeleton key={row} className="h-16 w-full rounded-2xl" />
         ))}
       </div>
     )
@@ -53,10 +53,10 @@ export default function EnquiryTable({
 
   if (error) {
     return (
-      <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-8 text-center">
+      <div className="p-8 text-center bg-destructive/5">
         <p className="text-sm font-medium text-destructive">{error}</p>
-        <Button variant="outline" className="mt-4" onClick={onRetry}>
-          <RefreshCwIcon />
+        <Button variant="outline" className="mt-4 rounded-full" onClick={onRetry}>
+          <RefreshCwIcon className="size-3.5 mr-1" />
           Retry
         </Button>
       </div>
@@ -65,83 +65,179 @@ export default function EnquiryTable({
 
   if (enquiries.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed border-border bg-card p-10 text-center">
-        <p className="text-sm font-semibold text-foreground">No enquiries found</p>
-        <p className="mt-1 text-sm text-muted-foreground">
-          New contact form submissions will appear here.
+      <div className="p-12 text-center space-y-1">
+        <p className="text-sm font-bold text-foreground">No enquiries found</p>
+        <p className="text-xs text-muted-foreground">
+          New contact form and chatbot enquiries will appear here automatically.
         </p>
       </div>
     )
   }
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-border bg-card shadow-xs">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Contact</TableHead>
-            <TableHead>Phone</TableHead>
-            <TableHead>Type</TableHead>
-            <TableHead>Interest</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Received</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {enquiries.map((enquiry) => (
-            <TableRow key={enquiry._id}>
-              <TableCell>
+    <>
+      {/* ─── Mobile View: Responsive Submission Cards (< md) ──────── */}
+      <div className="block md:hidden divide-y divide-border/50">
+        {enquiries.map((enquiry) => (
+          <div key={enquiry._id} className="p-4 space-y-3 hover:bg-muted/30 transition-colors">
+            {/* Card Header: Name + Type Badge */}
+            <div className="flex items-start justify-between gap-2">
+              <div className="min-w-0">
                 <button
                   type="button"
                   onClick={() => onSelect(enquiry)}
-                  className="text-left font-semibold text-foreground hover:text-primary"
+                  className="text-left font-bold text-sm text-foreground hover:text-primary transition-colors block truncate"
                 >
                   {enquiry.name}
                 </button>
-                <p className="text-xs text-muted-foreground">{enquiry.email}</p>
-              </TableCell>
-              <TableCell className="text-muted-foreground">{enquiry.phone}</TableCell>
-              <TableCell className="text-muted-foreground">{enquiry.userType}</TableCell>
-              <TableCell className="max-w-[200px] truncate text-muted-foreground">
-                {enquiry.interest}
-              </TableCell>
-              <TableCell>
-                <StatusDropdown
-                  value={enquiry.status}
-                  pending={pendingStatusId === enquiry._id}
-                  onChange={(status) => onStatusChange(enquiry._id, status)}
-                />
-              </TableCell>
-              <TableCell className="text-muted-foreground">
-                {formatDate(enquiry.createdAt)}
-              </TableCell>
-              <TableCell>
-                <div className="flex justify-end gap-1.5">
-                  <Button
-                    variant="outline"
-                    size="xs"
-                    onClick={() => onSelect(enquiry)}
-                    aria-label={`View enquiry from ${enquiry.name}`}
-                  >
-                    <EyeIcon />
-                    View
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    size="xs"
-                    onClick={() => onDelete(enquiry)}
-                    aria-label={`Delete enquiry from ${enquiry.name}`}
-                  >
-                    <Trash2Icon />
-                    Delete
-                  </Button>
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5 truncate">
+                  <MailIcon className="size-3 shrink-0" />
+                  <span className="truncate">{enquiry.email}</span>
                 </div>
-              </TableCell>
+              </div>
+              <span className="shrink-0 rounded-full bg-primary/15 text-primary border border-primary/25 px-2 py-0.5 text-[10px] font-bold">
+                {enquiry.userType}
+              </span>
+            </div>
+
+            {/* Interest & Phone */}
+            <div className="rounded-xl bg-muted/40 p-2.5 text-xs space-y-1 border border-border/40">
+              <div className="font-medium text-foreground truncate">
+                <span className="text-muted-foreground">Interest: </span>
+                {enquiry.interest}
+              </div>
+              <div className="flex items-center gap-1.5 text-muted-foreground font-mono text-[11px]">
+                <PhoneIcon className="size-3" />
+                <span>{enquiry.phone}</span>
+              </div>
+            </div>
+
+            {/* Card Footer: Status & Actions */}
+            <div className="flex items-center justify-between gap-2 pt-1">
+              <StatusDropdown
+                value={enquiry.status}
+                pending={pendingStatusId === enquiry._id}
+                onChange={(status) => onStatusChange(enquiry._id, status)}
+              />
+
+              <div className="flex items-center gap-1.5">
+                <span className="hidden xs:flex items-center gap-1 text-[11px] text-muted-foreground mr-1">
+                  <CalendarIcon className="size-3" />
+                  {formatDate(enquiry.createdAt)}
+                </span>
+                <Button
+                  variant="outline"
+                  size="xs"
+                  onClick={() => onSelect(enquiry)}
+                  aria-label={`View enquiry from ${enquiry.name}`}
+                  className="rounded-full text-xs px-2.5 h-7 border-border/80"
+                >
+                  <EyeIcon className="size-3 mr-1" />
+                  View
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="xs"
+                  onClick={() => onDelete(enquiry)}
+                  aria-label={`Delete enquiry from ${enquiry.name}`}
+                  className="rounded-full text-xs px-2 h-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                >
+                  <Trash2Icon className="size-3" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* ─── Desktop View: Full Data Table (>= md) ─────────────────── */}
+      <div className="hidden md:block overflow-x-auto">
+        <Table>
+          <TableHeader className="bg-muted/30">
+            <TableRow className="border-border/60">
+              <TableHead className="text-xs font-bold uppercase tracking-wider text-muted-foreground py-3.5">
+                Contact
+              </TableHead>
+              <TableHead className="text-xs font-bold uppercase tracking-wider text-muted-foreground py-3.5">
+                Phone
+              </TableHead>
+              <TableHead className="text-xs font-bold uppercase tracking-wider text-muted-foreground py-3.5">
+                Type
+              </TableHead>
+              <TableHead className="text-xs font-bold uppercase tracking-wider text-muted-foreground py-3.5">
+                Interest
+              </TableHead>
+              <TableHead className="text-xs font-bold uppercase tracking-wider text-muted-foreground py-3.5">
+                Status
+              </TableHead>
+              <TableHead className="text-xs font-bold uppercase tracking-wider text-muted-foreground py-3.5">
+                Received
+              </TableHead>
+              <TableHead className="text-right text-xs font-bold uppercase tracking-wider text-muted-foreground py-3.5">
+                Actions
+              </TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+          </TableHeader>
+          <TableBody>
+            {enquiries.map((enquiry) => (
+              <TableRow key={enquiry._id} className="border-border/50 hover:bg-muted/40 transition-colors">
+                <TableCell className="py-3">
+                  <button
+                    type="button"
+                    onClick={() => onSelect(enquiry)}
+                    className="text-left font-semibold text-foreground hover:text-primary transition-colors block max-w-[200px] truncate"
+                  >
+                    {enquiry.name}
+                  </button>
+                  <p className="text-xs text-muted-foreground max-w-[200px] truncate">{enquiry.email}</p>
+                </TableCell>
+                <TableCell className="text-xs text-muted-foreground font-mono">{enquiry.phone}</TableCell>
+                <TableCell className="text-xs text-foreground font-medium">
+                  <span className="rounded-full bg-muted px-2.5 py-0.5 border border-border/50">
+                    {enquiry.userType}
+                  </span>
+                </TableCell>
+                <TableCell className="max-w-[200px] truncate text-xs text-muted-foreground">
+                  {enquiry.interest}
+                </TableCell>
+                <TableCell>
+                  <StatusDropdown
+                    value={enquiry.status}
+                    pending={pendingStatusId === enquiry._id}
+                    onChange={(status) => onStatusChange(enquiry._id, status)}
+                  />
+                </TableCell>
+                <TableCell className="text-xs text-muted-foreground whitespace-nowrap">
+                  {formatDate(enquiry.createdAt)}
+                </TableCell>
+                <TableCell className="text-right">
+                  <div className="flex justify-end gap-1.5">
+                    <Button
+                      variant="outline"
+                      size="xs"
+                      onClick={() => onSelect(enquiry)}
+                      aria-label={`View enquiry from ${enquiry.name}`}
+                      className="rounded-full text-xs px-2.5 h-7 border-border/80 hover:border-primary/50"
+                    >
+                      <EyeIcon className="size-3 mr-1" />
+                      View
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="xs"
+                      onClick={() => onDelete(enquiry)}
+                      aria-label={`Delete enquiry from ${enquiry.name}`}
+                      className="rounded-full text-xs px-2.5 h-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                    >
+                      <Trash2Icon className="size-3" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </>
   )
 }

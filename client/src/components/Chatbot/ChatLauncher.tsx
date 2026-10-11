@@ -92,7 +92,7 @@ export default function ChatLauncher() {
         <div
           role="dialog"
           aria-label="Welcome message"
-          className="fixed right-4 bottom-22 sm:right-6 sm:bottom-24 z-40 max-w-[320px] rounded-[1.8rem] p-1.5 bg-muted/40 border border-border shadow-2xl backdrop-blur-md animate-bubble-in motion-reduce:animate-none select-none"
+          className="fixed right-3 bottom-20 sm:right-6 sm:bottom-24 z-40 max-w-[calc(100vw-1.5rem)] sm:max-w-[320px] rounded-[1.8rem] p-1.5 bg-muted/40 border border-border shadow-2xl backdrop-blur-md animate-bubble-in motion-reduce:animate-none select-none"
         >
           <div className="rounded-[calc(1.8rem-0.375rem)] bg-card p-3.5 border border-border/40 shadow-xs flex items-start gap-2.5">
             <span className="flex size-9 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-primary">
