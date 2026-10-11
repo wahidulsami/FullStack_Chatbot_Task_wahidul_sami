@@ -11,3 +11,9 @@ build/
 # OS / logs
 .DS_Store
 *.log
+
+# Skills & agent configs
+.agents/
+.skills/
+skills/
+skills-lock.json

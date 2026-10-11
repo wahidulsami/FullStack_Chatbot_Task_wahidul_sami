@@ -63,7 +63,7 @@ export default function Navbar() {
               </Button>
             </>
           ) : (
-            <Button render={<Link to="/admin/login" />} size="sm">
+            <Button  render={<Link to="/admin/login" />} size="sm">
               Admin Login
             </Button>
           )}

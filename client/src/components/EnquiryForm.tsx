@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useId, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { CheckCircle2Icon, SendIcon } from "lucide-react"
@@ -24,18 +24,29 @@ import { enquirySchema, type EnquiryFormValues } from "@/validation/schemas"
 
 const MESSAGE_MAX = 5000
 
-const defaultValues: EnquiryFormValues = {
+type EnquiryFormProps = {
+  compact?: boolean
+  defaultUserType?: UserType
+  onSuccess?: () => void
+}
+
+const makeDefaultValues = (userType: UserType = "Student"): EnquiryFormValues => ({
   name: "",
   email: "",
   phone: "",
-  userType: "Student",
+  userType,
   interest: "",
   message: "",
-}
+})
 
-export default function EnquiryForm() {
+export default function EnquiryForm({
+  compact = false,
+  defaultUserType,
+  onSuccess,
+}: EnquiryFormProps) {
   const dispatch = useAppDispatch()
   const [sent, setSent] = useState(false)
+  const idPrefix = useId()
 
   const {
     register,
@@ -47,8 +58,10 @@ export default function EnquiryForm() {
     formState: { errors, isSubmitting },
   } = useForm<EnquiryFormValues>({
     resolver: zodResolver(enquirySchema),
-    defaultValues,
+    defaultValues: makeDefaultValues(defaultUserType),
   })
+
+  const fieldId = (field: string) => `${idPrefix}${field}`
 
   const userType = watch("userType")
   const messageLength = watch("message").length
@@ -57,13 +70,17 @@ export default function EnquiryForm() {
     const result = await dispatch(submitEnquiry(values))
 
     if (submitEnquiry.fulfilled.match(result)) {
-      setSent(true)
-      reset(defaultValues)
+      reset(makeDefaultValues(defaultUserType))
       toast.add({
         type: "success",
         title: "Enquiry sent",
         description: "We will get back to you shortly.",
       })
+      if (onSuccess) {
+        onSuccess()
+        return
+      }
+      setSent(true)
       return
     }
 
@@ -98,14 +115,25 @@ export default function EnquiryForm() {
   }
 
   return (
-    <Card>
+    <Card
+      size={compact ? "sm" : "default"}
+      className={compact ? "bg-transparent shadow-none ring-0" : undefined}
+    >
       <CardHeader>
-        <CardTitle className="font-heading">Send us a message</CardTitle>
-        <CardDescription>Fill in the form below and we will contact you.</CardDescription>
+        <CardTitle className="font-heading">
+          {compact ? "Leave your details" : "Send us a message"}
+        </CardTitle>
+        {!compact && (
+          <CardDescription>Fill in the form below and we will contact you.</CardDescription>
+        )}
       </CardHeader>
 
       <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          noValidate
+          className={cn("space-y-5", compact && "space-y-3")}
+        >
           {errors.root?.message && (
             <Alert variant="destructive">
               <AlertTitle>Submission failed</AlertTitle>
@@ -113,11 +141,11 @@ export default function EnquiryForm() {
             </Alert>
           )}
 
-          <div className="grid gap-5 sm:grid-cols-2">
+          <div className={cn("grid gap-5 sm:grid-cols-2", compact && "grid-cols-1 gap-3")}>
             <Field data-invalid={!!errors.name}>
-              <FieldLabel htmlFor="name">Full name</FieldLabel>
+              <FieldLabel htmlFor={fieldId("name")}>Full name</FieldLabel>
               <Input
-                id="name"
+                id={fieldId("name")}
                 placeholder="Jane Doe"
                 aria-invalid={!!errors.name}
                 {...register("name")}
@@ -126,9 +154,9 @@ export default function EnquiryForm() {
             </Field>
 
             <Field data-invalid={!!errors.email}>
-              <FieldLabel htmlFor="email">Email</FieldLabel>
+              <FieldLabel htmlFor={fieldId("email")}>Email</FieldLabel>
               <Input
-                id="email"
+                id={fieldId("email")}
                 type="email"
                 placeholder="jane@example.com"
                 aria-invalid={!!errors.email}
@@ -138,9 +166,9 @@ export default function EnquiryForm() {
             </Field>
 
             <Field data-invalid={!!errors.phone}>
-              <FieldLabel htmlFor="phone">Phone</FieldLabel>
+              <FieldLabel htmlFor={fieldId("phone")}>Phone</FieldLabel>
               <Input
-                id="phone"
+                id={fieldId("phone")}
                 type="tel"
                 placeholder="+880 1712 345678"
                 aria-invalid={!!errors.phone}
@@ -172,9 +200,9 @@ export default function EnquiryForm() {
             </Field>
 
             <Field className="sm:col-span-2" data-invalid={!!errors.interest}>
-              <FieldLabel htmlFor="interest">Service or course of interest</FieldLabel>
+              <FieldLabel htmlFor={fieldId("interest")}>Service or course of interest</FieldLabel>
               <Input
-                id="interest"
+                id={fieldId("interest")}
                 placeholder="e.g. Full Stack Web Development"
                 aria-invalid={!!errors.interest}
                 {...register("interest")}
@@ -183,10 +211,10 @@ export default function EnquiryForm() {
             </Field>
 
             <Field className="sm:col-span-2" data-invalid={!!errors.message}>
-              <FieldLabel htmlFor="message">Message</FieldLabel>
+              <FieldLabel htmlFor={fieldId("message")}>Message</FieldLabel>
               <Textarea
-                id="message"
-                rows={6}
+                id={fieldId("message")}
+                rows={compact ? 3 : 6}
                 placeholder="Tell us what you are looking for..."
                 aria-invalid={!!errors.message}
                 {...register("message")}
@@ -203,7 +231,7 @@ export default function EnquiryForm() {
             </Field>
           </div>
 
-          <Button type="submit" disabled={isSubmitting}>
+          <Button type="submit" size={compact ? "sm" : "default"} disabled={isSubmitting}>
             <SendIcon />
             {isSubmitting ? "Sending..." : "Send enquiry"}
           </Button>

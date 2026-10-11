@@ -29,7 +29,7 @@ Light mode:
 | Token | oklch | hex |
 | ----- | ----- | --- |
 | `--primary` | `oklch(0.852 0.199 91.936)` | `#fdc700` (yellow) |
-| `--primary-foreground` | `oklch(0.421 0.095 57.708)` | `#733e0a` |
+| `--primary-foreground` | `oklch(0.25 0.05 80)` | `#2e1e01` (near-black brown) |
 | `--background` | `oklch(1 0 0)` | `#ffffff` |
 | `--foreground` | `oklch(0.145 0 0)` | `#0a0a0a` |
 | `--card` | `oklch(1 0 0)` | `#ffffff` |
@@ -40,7 +40,8 @@ Light mode:
 | `--ring` | `oklch(0.708 0 0)` | `#999999` |
 | `--destructive` | `oklch(0.577 0.245 27.325)` | `#e7000b` |
 
-Dark mode (`.dark`): `--primary: oklch(0.795 0.184 86.047)` (`#f0b100`),
+Dark mode (`.dark`): `--primary: oklch(0.795 0.184 86.047)` (`#f0b100`) with the same
+`--primary-foreground` as light mode,
 `--background: oklch(0.145 0 0)`, `--card: oklch(0.205 0 0)`, borders `oklch(1 0 0 / 10%)`.
 
 Charts: `--chart-1..5` (yellow → orange ramp). Sidebar tokens `--sidebar*` mirror card/accent.

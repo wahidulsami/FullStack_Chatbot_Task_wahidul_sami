@@ -1,8 +1,10 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
+import ChatLauncher from "@/components/Chatbot/ChatLauncher"
 import Layout from "@/components/Layout"
 import RequireAuth from "@/components/RequireAuth"
 import AdminDashboard from "@/pages/AdminDashboard"
 import AdminLogin from "@/pages/AdminLogin"
+import Chat from "@/pages/Chat"
 import Contact from "@/pages/Contact"
 import Courses from "@/pages/Courses"
 import Home from "@/pages/Home"
@@ -17,6 +19,7 @@ function App() {
           <Route path="/services" element={<Services />} />
           <Route path="/courses" element={<Courses />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/chat" element={<Chat />} />
         </Route>
 
         <Route path="/admin/login" element={<AdminLogin />} />
@@ -31,6 +34,7 @@ function App() {
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      <ChatLauncher />
     </BrowserRouter>
   )
 }
