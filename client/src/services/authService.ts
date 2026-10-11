@@ -1,5 +1,16 @@
-import { api, refreshSession, setAccessToken, toApiError } from "./api"
+import { api, getApiErrorStatus, refreshSession, setAccessToken, toApiError } from "./api"
 import type { AuthUser, LoginResponse, UserResponse } from "../types/auth"
+
+export type RestoreOutcome =
+  | { outcome: "authenticated"; user: AuthUser }
+  | { outcome: "guest" }
+  | { outcome: "unreachable" }
+
+const TRANSIENT_RETRY_DELAYS_MS = [1_000, 3_000]
+
+function wait(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
 
 export async function login(email: string, password: string): Promise<LoginResponse> {
   try {
@@ -32,14 +43,30 @@ export async function fetchCurrentUser(): Promise<AuthUser> {
   }
 }
 
-export async function restoreSession(): Promise<AuthUser | null> {
-  try {
-    const token = await refreshSession()
-    if (!token) return null
-    return await fetchCurrentUser()
-  } catch {
-    setAccessToken(null)
-    return null
+export async function restoreSession(): Promise<RestoreOutcome> {
+  for (let attempt = 0; ; attempt++) {
+    const refresh = await refreshSession()
+
+    if (refresh.ok) {
+      try {
+        const user = await fetchCurrentUser()
+        return { outcome: "authenticated", user }
+      } catch (error) {
+        // Only a real rejection of our credentials ends the session.
+        if (getApiErrorStatus(error) === 401) {
+          setAccessToken(null)
+          return { outcome: "guest" }
+        }
+        // 429/5xx/network on /auth/me → retry below
+      }
+    } else if (refresh.reason === "unauthorized") {
+      return { outcome: "guest" }
+    }
+
+    if (attempt >= TRANSIENT_RETRY_DELAYS_MS.length) {
+      return { outcome: "unreachable" }
+    }
+    await wait(TRANSIENT_RETRY_DELAYS_MS[attempt])
   }
 }
 

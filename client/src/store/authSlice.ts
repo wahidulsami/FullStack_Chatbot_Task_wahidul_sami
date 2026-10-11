@@ -3,7 +3,7 @@ import { getApiErrorMessage } from "@/services/api"
 import * as authService from "@/services/authService"
 import type { AuthUser, LoginResponse } from "@/types/auth"
 
-export type AuthStatus = "loading" | "authenticated" | "guest"
+export type AuthStatus = "loading" | "authenticated" | "guest" | "error"
 
 export interface AuthState {
   user: AuthUser | null
@@ -17,11 +17,12 @@ const initialState: AuthState = {
   initialized: false,
 }
 
-export const restoreSession = createAsyncThunk("auth/restore", async () => {
+export const restoreSession = createAsyncThunk("auth/restore", async (): Promise<authService.RestoreOutcome> => {
   try {
     return await authService.restoreSession()
   } catch {
-    return null
+    // An unexpected client error is not proof the session ended.
+    return { outcome: "unreachable" }
   }
 })
 
@@ -56,14 +57,23 @@ const authSlice = createSlice({
       .addCase(restoreSession.pending, (state) => {
         state.status = "loading"
       })
-      .addCase(restoreSession.fulfilled, (state, action: PayloadAction<AuthUser | null>) => {
-        state.user = action.payload
-        state.status = action.payload ? "authenticated" : "guest"
+      .addCase(restoreSession.fulfilled, (state, action: PayloadAction<authService.RestoreOutcome>) => {
+        const { outcome } = action.payload
+
+        if (outcome === "authenticated") {
+          state.user = action.payload.user
+          state.status = "authenticated"
+        } else if (outcome === "guest") {
+          state.user = null
+          state.status = "guest"
+        } else {
+          // transient failure (429/5xx/network): session kept, show retry UI
+          state.status = "error"
+        }
         state.initialized = true
       })
       .addCase(restoreSession.rejected, (state) => {
-        state.user = null
-        state.status = "guest"
+        state.status = "error"
         state.initialized = true
       })
       .addCase(login.fulfilled, (state, action: PayloadAction<LoginResponse>) => {

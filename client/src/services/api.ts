@@ -7,7 +7,7 @@ const baseURL = import.meta.env.VITE_API_URL || "/api"
 const TIMEOUT_MS = 15_000
 
 let accessToken: string | null = null
-let refreshPromise: Promise<string | null> | null = null
+let refreshPromise: Promise<RefreshResult> | null = null
 let sessionExpiredHandler: (() => void) | null = null
 
 export function setAccessToken(token: string | null): void {
@@ -123,18 +123,35 @@ export function getApiErrorStatus(error: unknown): number | undefined {
   return toApiError(error).status
 }
 
-async function refreshAccessToken(): Promise<string | null> {
+export type RefreshFailureReason = "unauthorized" | "transient"
+
+export type RefreshResult =
+  | { ok: true; token: string }
+  | { ok: false; reason: RefreshFailureReason }
+
+async function refreshAccessToken(): Promise<RefreshResult> {
   try {
     const { data } = await authClient.post<LoginResponse>("/auth/refresh")
-    accessToken = data.accessToken
-    return accessToken
-  } catch {
-    accessToken = null
-    return null
+    const token = data?.accessToken
+    if (!token) return { ok: false, reason: "transient" }
+    accessToken = token
+    return { ok: true, token }
+  } catch (error) {
+    const status = axios.isAxiosError(error) ? error.response?.status : undefined
+
+    if (status === 401) {
+      // The server rejected the refresh token: this session is really over.
+      accessToken = null
+      return { ok: false, reason: "unauthorized" }
+    }
+
+    // 429 / 5xx / network / timeout: the refresh cookie is still valid
+    // server-side, so keep the session instead of forcing a logout.
+    return { ok: false, reason: "transient" }
   }
 }
 
-export function refreshSession(): Promise<string | null> {
+export function refreshSession(): Promise<RefreshResult> {
   if (!refreshPromise) {
     refreshPromise = refreshAccessToken().finally(() => {
       refreshPromise = null
@@ -161,12 +178,17 @@ api.interceptors.response.use(
 
     if (unauthorized && original && !original._retried && !isAuthRoute) {
       original._retried = true
-      const token = await refreshSession()
-      if (token) {
+      const result = await refreshSession()
+
+      if (result.ok) {
         return api(original)
       }
-      accessToken = null
-      sessionExpiredHandler?.()
+
+      if (result.reason === "unauthorized") {
+        accessToken = null
+        sessionExpiredHandler?.()
+      }
+      // transient failure: keep the session, let the caller see the error
     }
 
     return Promise.reject(toApiError(error))

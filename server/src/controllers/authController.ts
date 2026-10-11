@@ -9,6 +9,9 @@ import {
 } from "../utils/jwt"
 
 const REFRESH_COOKIE = "refreshToken"
+// A rotated-away refresh token stays valid this long, so concurrent refreshes
+// (double F5, multiple tabs, aborted responses) don't get a 401.
+const ROTATION_GRACE_MS = 30_000
 
 const cookieOptions: CookieOptions = {
   httpOnly: true,
@@ -41,6 +44,8 @@ export async function login(req: Request, res: Response) {
   const refreshToken = signRefreshToken(payload)
 
   user.refreshTokenHash = hashToken(refreshToken)
+  user.prevRefreshTokenHash = undefined
+  user.rotatedAt = undefined
   await user.save()
 
   res.cookie(REFRESH_COOKIE, refreshToken, cookieOptions)
@@ -58,10 +63,22 @@ export async function refresh(req: Request, res: Response) {
 
   try {
     const decoded = verifyRefreshToken(token)
-    const user = await User.findById(decoded.id).select("+refreshTokenHash")
+    const user = await User.findById(decoded.id).select(
+      "+refreshTokenHash +prevRefreshTokenHash"
+    )
 
+    if (!user || !user.refreshTokenHash) {
+      return res.status(401).json({ message: "Not authorized" })
+    }
 
-    if (!user || user.refreshTokenHash !== hashToken(token)) {
+    const incomingHash = hashToken(token)
+    const isCurrent = user.refreshTokenHash === incomingHash
+    const isWithinGrace =
+      user.prevRefreshTokenHash === incomingHash &&
+      !!user.rotatedAt &&
+      Date.now() - user.rotatedAt.getTime() <= ROTATION_GRACE_MS
+
+    if (!isCurrent && !isWithinGrace) {
       return res.status(401).json({ message: "Not authorized" })
     }
 
@@ -69,7 +86,12 @@ export async function refresh(req: Request, res: Response) {
     const newAccessToken = signAccessToken(payload)
     const newRefreshToken = signRefreshToken(payload)
 
+    // Rotate, keeping the token that is still valid right now as the grace
+    // fallback: on a normal hit that is the incoming token itself; on a grace
+    // hit it is the current one (so the tab holding it isn't kicked out).
+    user.prevRefreshTokenHash = user.refreshTokenHash
     user.refreshTokenHash = hashToken(newRefreshToken)
+    user.rotatedAt = new Date()
     await user.save()
 
     res.cookie(REFRESH_COOKIE, newRefreshToken, cookieOptions)
@@ -85,7 +107,9 @@ export async function logout(req: Request, res: Response) {
   if (token) {
     try {
       const decoded = verifyRefreshToken(token)
-      await User.findByIdAndUpdate(decoded.id, { $unset: { refreshTokenHash: 1 } })
+      await User.findByIdAndUpdate(decoded.id, {
+        $unset: { refreshTokenHash: 1, prevRefreshTokenHash: 1, rotatedAt: 1 },
+      })
     } catch {
       // Ignore token verification errors
     }
