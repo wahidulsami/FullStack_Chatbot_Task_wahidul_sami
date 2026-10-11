@@ -11,6 +11,8 @@ export interface IUser {
   email: string
   password: string 
   refreshTokenHash?: string
+  prevRefreshTokenHash?: string
+  rotatedAt?: Date
   role: Role
   createdAt: Date
   updatedAt: Date
@@ -50,6 +52,15 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>(
   type: String,
   select: false, 
 },
+    // Previous refresh token hash: valid for a short grace window after
+    // rotation so overlapping/duplicate refresh requests don't kill the session.
+    prevRefreshTokenHash: {
+      type: String,
+      select: false,
+    },
+    rotatedAt: {
+      type: Date,
+    },
     role: {
       type: String,
       enum: { values: ROLES, message: "Invalid role" },
@@ -62,6 +73,8 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>(
       transform: (_doc, ret) => {
         const obj = ret as Record<string, unknown>
         delete obj.password
+        delete obj.refreshTokenHash
+        delete obj.prevRefreshTokenHash
         delete obj.__v
         return obj
       },

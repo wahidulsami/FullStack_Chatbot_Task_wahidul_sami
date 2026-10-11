@@ -1,4 +1,5 @@
 import { z } from "zod"
+import xss from "xss"
 import { STATUSES, USER_TYPES } from "../models/Enquiry"
 
 const email = z
@@ -27,7 +28,8 @@ export const createEnquirySchema = z.object({
     .string()
     .trim()
     .min(5, "Message is too short")
-    .max(2000, "Message is too long (max 2000 characters)"),
+    .max(2000, "Message is too long (max 2000 characters)")
+    .transform((value) => xss(value)),
 })
 
 export type CreateEnquiryInput = z.infer<typeof createEnquirySchema>
