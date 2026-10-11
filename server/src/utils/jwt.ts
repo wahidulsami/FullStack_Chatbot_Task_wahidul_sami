@@ -28,7 +28,9 @@ function assertDistinctSecrets(): void {
 function signToken(payload: JwtPayload, type: TokenType, secretEnv: string, expiresIn: string) {
   assertDistinctSecrets()
   const options: SignOptions = { expiresIn: expiresIn as SignOptions["expiresIn"] }
-  return jwt.sign({ ...payload, type }, getEnv(secretEnv), options)
+  // jti makes every token unique, so rotation always yields a distinct token
+  // even when iat lands in the same second.
+  return jwt.sign({ ...payload, type, jti: crypto.randomUUID() }, getEnv(secretEnv), options)
 }
 
 function verifyToken(token: string, type: TokenType, secretEnv: string): JwtPayload {

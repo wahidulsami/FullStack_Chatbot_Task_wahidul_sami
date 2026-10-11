@@ -56,7 +56,7 @@ const enquirySchema = new Schema<IEnquiry>(
       required: [true, "Message is required"],
       trim: true,
       minlength: [5, "Message is too short"],
-      maxlength: [1000, "Message is too long"],
+      maxlength: [5000, "Message is too long (max 5000 characters)"],
     },
     status: {
       type: String,

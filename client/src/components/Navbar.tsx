@@ -1,5 +1,6 @@
 import { LayoutDashboardIcon, LogOutIcon } from "lucide-react"
 import { Link, NavLink, useNavigate } from "react-router-dom"
+import ThemeToggle from "@/components/ThemeToggle"
 import { Button } from "@/components/ui/button"
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
 import { logout } from "@/store/authSlice"
@@ -48,6 +49,7 @@ export default function Navbar() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           {status === "authenticated" && user ? (
             <>
               <Button render={<Link to="/admin" />} size="sm">

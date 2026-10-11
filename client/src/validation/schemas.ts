@@ -28,7 +28,7 @@ export const enquirySchema = z.object({
     .string()
     .trim()
     .min(5, "Message is too short")
-    .max(1000, "Message is too long"),
+    .max(2000, "Message is too long (max 2000 characters)"),
 })
 
 export type EnquiryFormValues = z.infer<typeof enquirySchema>

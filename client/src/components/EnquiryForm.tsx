@@ -16,10 +16,13 @@ import {
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/components/ui/toast"
+import { cn } from "cn"
 import { USER_TYPES, type UserType } from "@/types/enquiry"
 import { useAppDispatch } from "@/store/hooks"
 import { submitEnquiry } from "@/store/enquiriesSlice"
 import { enquirySchema, type EnquiryFormValues } from "@/validation/schemas"
+
+const MESSAGE_MAX = 5000
 
 const defaultValues: EnquiryFormValues = {
   name: "",
@@ -48,6 +51,7 @@ export default function EnquiryForm() {
   })
 
   const userType = watch("userType")
+  const messageLength = watch("message").length
 
   const onSubmit = async (values: EnquiryFormValues) => {
     const result = await dispatch(submitEnquiry(values))
@@ -182,11 +186,19 @@ export default function EnquiryForm() {
               <FieldLabel htmlFor="message">Message</FieldLabel>
               <Textarea
                 id="message"
-                rows={5}
+                rows={6}
                 placeholder="Tell us what you are looking for..."
                 aria-invalid={!!errors.message}
                 {...register("message")}
               />
+              <p
+                className={cn(
+                  "text-right text-xs text-muted-foreground",
+                  messageLength > MESSAGE_MAX && "text-destructive"
+                )}
+              >
+                {messageLength} / {MESSAGE_MAX}
+              </p>
               <FieldError errors={[errors.message]} />
             </Field>
           </div>

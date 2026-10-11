@@ -3,6 +3,7 @@ import { Link } from "react-router-dom"
 import { LayoutDashboardIcon, LogOutIcon, RefreshCwIcon } from "lucide-react"
 import EnquiryDetails from "@/components/admin/EnquiryDetails"
 import EnquiryTable from "@/components/admin/EnquiryTable"
+import ThemeToggle from "@/components/ThemeToggle"
 import { Button } from "@/components/ui/button"
 import {
   Select,
@@ -98,6 +99,7 @@ export default function AdminDashboard() {
           </div>
 
           <div className="flex items-center gap-2">
+            <ThemeToggle />
             <div className="hidden text-right sm:block">
               <p className="text-sm font-semibold text-foreground">{user?.name}</p>
               <p className="text-xs text-muted-foreground">{user?.email}</p>
@@ -165,6 +167,7 @@ export default function AdminDashboard() {
 
       {selected && (
         <EnquiryDetails
+          key={selected._id}
           enquiry={selected}
           pending={pendingStatusId === selected._id}
           onClose={() => dispatch(selectEnquiry(null))}

@@ -33,7 +33,7 @@ Admin endpoints require `Authorization: Bearer <accessToken>` (from `POST /api/a
 | `phone`   | string | required, `/^\+?[0-9\s-]{7,15}$/` |
 | `userType`| enum | `Student` \| `Customer` \| `Other` |
 | `interest`| string | required, ≤ 150 chars |
-| `message` | string | required, 5–1000 chars |
+| `message` | string | required, 5–5000 chars |
 | `status`  | enum | `New` \| `Contacted` \| `In Progress` \| `Closed` — settable by admin only, defaults to `New` |
 
 ### Responses
