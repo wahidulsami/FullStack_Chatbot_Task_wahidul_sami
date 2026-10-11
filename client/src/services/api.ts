@@ -145,7 +145,7 @@ export function refreshSession(): Promise<string | null> {
 
 api.interceptors.request.use((config) => {
   if (accessToken && !config.headers.Authorization) {
-    config.headers.Authorization = `Bearer ${accessToken}`
+    config.headers.Authorization = "Bearer " + accessToken
   }
   return config
 })

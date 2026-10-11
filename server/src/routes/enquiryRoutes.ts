@@ -7,8 +7,8 @@ import {
   updateEnquiryStatus,
 } from "../controllers/enquiryController"
 import { adminOnly, protect } from "../middleware/authMiddleware"
-import { validate } from "../middleware/validate"
-import { createEnquirySchema, updateEnquiryStatusSchema } from "../lib/validation"
+import { validate, validateQuery } from "../middleware/validate"
+import { createEnquirySchema, enquiryListQuerySchema, updateEnquiryStatusSchema } from "../lib/validation"
 
 const router = Router()
 
@@ -16,7 +16,7 @@ router.post("/", validate(createEnquirySchema), createEnquiry)
 
 const updateStatus = [protect, adminOnly, validate(updateEnquiryStatusSchema), updateEnquiryStatus]
 
-router.get("/", protect, adminOnly, listEnquiries)
+router.get("/", protect, adminOnly, validateQuery(enquiryListQuerySchema), listEnquiries)
 router.get("/:id", protect, adminOnly, getEnquiry)
 router.patch("/:id", updateStatus)
 router.patch("/:id/status", updateStatus)

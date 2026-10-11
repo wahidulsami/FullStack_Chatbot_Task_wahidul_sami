@@ -20,3 +20,23 @@ export const validate =
     req.body = result.data
     next()
   }
+
+export const validateQuery =
+  (schema: ZodType) =>
+  (req: Request, res: Response, next: NextFunction): void => {
+    const result = schema.safeParse(req.query)
+
+    if (!result.success) {
+      res.status(400).json({
+        message: "Validation failed",
+        errors: result.error.issues.map((issue) => ({
+          field: issue.path.join("."),
+          message: issue.message,
+        })),
+      })
+      return
+    }
+
+    req.query = result.data as Request["query"]
+    next()
+  }
