@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom"
 import {
+  ArrowRightIcon,
   CameraIcon,
   CheckCircle2Icon,
   CompassIcon,
@@ -8,7 +9,6 @@ import {
   SparklesIcon,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 
 const services = [
   {
@@ -19,7 +19,7 @@ const services = [
     benefits: [
       "RTK-calibrated GPS coordinates",
       "CAD & GIS compatible outputs (GeoTIFF, DXF)",
-      "Boundary & contour line elevation mapping",
+      "Boundary and contour line elevation mapping",
     ],
   },
   {
@@ -29,7 +29,7 @@ const services = [
       "Thermal infrared audits to detect defective solar cells, pipeline cracks, transmission line hotspots, and wind turbine damage without system downtime.",
     benefits: [
       "Radiometric thermal imagery reports",
-      "Automated hotspot & anomaly tagging",
+      "Automated hotspot and anomaly tagging",
       "Zero personnel risk on hazardous sites",
     ],
   },
@@ -64,54 +64,71 @@ export default function Services() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-12">
+    <div className="mx-auto max-w-6xl px-4 sm:px-6 py-12 space-y-12">
+      {/* Header */}
       <div className="mx-auto max-w-2xl text-center space-y-3">
-        <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+        <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3.5 py-1 text-xs font-semibold text-primary">
           <SparklesIcon className="size-3.5" />
           Enterprise Aerial Solutions
         </div>
-        <h1 className="font-heading text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
-          Professional Drone Services
+        <h1 className="font-heading text-3xl sm:text-5xl font-black tracking-tight text-foreground">
+          Commercial Drone Services
         </h1>
-        <p className="text-muted-foreground text-sm sm:text-base">
+        <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
           From high-precision surveying to industrial thermal audits, our certified drone fleet
-          delivers fast, actionable insights for your business.
+          delivers fast, actionable insights for your business operations.
         </p>
       </div>
 
-      <div className="mt-10 grid gap-6 md:grid-cols-2">
+      {/* Services Grid with Double-Bezel Framing */}
+      <div className="grid gap-6 md:grid-cols-2">
         {services.map((service) => (
-          <Card key={service.title} className="flex flex-col justify-between rounded-2xl border-border bg-card shadow-xs hover:border-primary/50 transition-colors">
-            <CardHeader className="space-y-3">
-              <span className="flex size-11 items-center justify-center rounded-xl bg-primary/15 text-primary">
-                <service.icon className="size-6" />
-              </span>
-              <CardTitle className="text-xl font-bold tracking-tight text-foreground">
-                {service.title}
-              </CardTitle>
-            </CardHeader>
+          <div
+            key={service.title}
+            className="rounded-[2rem] p-1.5 bg-muted/40 border border-border/80 shadow-xs hover:border-primary/50 transition-colors"
+          >
+            <div className="rounded-[calc(2rem-0.375rem)] bg-card p-6 sm:p-8 h-full flex flex-col justify-between space-y-6 border border-border/40">
+              <div className="space-y-4">
+                <span className="flex size-12 items-center justify-center rounded-2xl bg-primary/15 text-primary">
+                  <service.icon className="size-6 stroke-[2]" />
+                </span>
 
-            <CardContent className="space-y-4 text-sm text-muted-foreground">
-              <p className="leading-relaxed">{service.description}</p>
-              <ul className="space-y-2 text-xs text-foreground font-medium">
-                {service.benefits.map((b) => (
-                  <li key={b} className="flex items-center gap-2">
-                    <CheckCircle2Icon className="size-3.5 text-emerald-500 shrink-0" />
-                    <span>{b}</span>
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
+                <h2 className="font-heading text-xl font-bold tracking-tight text-foreground">
+                  {service.title}
+                </h2>
 
-            <CardFooter className="pt-2 flex gap-3">
-              <Button onClick={triggerChat} className="w-full rounded-xl">
-                Request Quote via Chat
-              </Button>
-              <Button variant="outline" render={<Link to="/contact" />} className="rounded-xl">
-                Contact
-              </Button>
-            </CardFooter>
-          </Card>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {service.description}
+                </p>
+
+                <ul className="space-y-2 text-xs text-foreground font-medium pt-2">
+                  {service.benefits.map((b) => (
+                    <li key={b} className="flex items-center gap-2">
+                      <CheckCircle2Icon className="size-3.5 text-emerald-500 shrink-0" />
+                      <span>{b}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="pt-4 border-t border-border/60 flex items-center gap-3">
+                <Button
+                  onClick={triggerChat}
+                  className="group flex-1 rounded-full bg-primary text-primary-foreground font-semibold hover:bg-primary/90 text-xs shadow-xs py-2.5 transition-all active:scale-[0.98]"
+                >
+                  <span>Request Quote via Chat</span>
+                  <ArrowRightIcon className="ml-1.5 size-3 transition-transform group-hover:translate-x-0.5" />
+                </Button>
+                <Button
+                  variant="outline"
+                  render={<Link to="/contact" />}
+                  className="rounded-full text-xs px-4"
+                >
+                  Contact
+                </Button>
+              </div>
+            </div>
+          </div>
         ))}
       </div>
     </div>

@@ -27,7 +27,7 @@ export default function RequireAuth({ children }: { children: ReactNode }) {
           <AlertTitle>Can&apos;t reach the server</AlertTitle>
           <AlertDescription>
             We couldn&apos;t restore your session because the server is unreachable or rate-limited.
-            Your session has not ended — try again in a moment.
+            Your session has not ended, please try again in a moment.
           </AlertDescription>
         </Alert>
         <Button onClick={() => void dispatch(restoreSession())}>

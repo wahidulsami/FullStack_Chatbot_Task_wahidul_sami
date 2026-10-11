@@ -64,24 +64,26 @@ export default function ChatLauncher() {
           role="presentation"
           aria-hidden="true"
           onClick={() => setIsExpanded(false)}
-          className="fixed inset-0 z-40 bg-background/60 backdrop-blur-xs transition-opacity duration-300"
+          className="fixed inset-0 z-40 bg-background/70 backdrop-blur-sm transition-opacity duration-300"
         />
       )}
 
-      {/* ─── Chat Window (Floating or Expanded) ────────────────────── */}
+      {/* ─── Chat Window (Floating or Expanded with Double-Bezel) ──── */}
       {open && (
         <div
-          className={`fixed z-50 flex flex-col overflow-hidden bg-card border border-border shadow-2xl transition-all duration-300 ease-out ${
+          className={`fixed z-50 flex flex-col overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] ${
             isExpanded
-              ? "inset-2 sm:inset-4 md:inset-6 lg:inset-8 rounded-2xl"
-              : "inset-x-3 bottom-20 top-16 sm:top-auto sm:inset-auto sm:right-5 sm:bottom-22 sm:h-[620px] sm:w-[420px] sm:rounded-2xl"
+              ? "inset-2 sm:inset-4 md:inset-6 lg:inset-8 rounded-[2rem] p-1.5 sm:p-2 bg-muted/40 border border-border shadow-2xl backdrop-blur-md"
+              : "inset-x-3 bottom-20 top-16 sm:top-auto sm:inset-auto sm:right-6 sm:bottom-24 sm:h-[630px] sm:w-[420px] rounded-[2rem] p-1.5 bg-muted/40 border border-border shadow-2xl backdrop-blur-md"
           }`}
         >
-          <ChatWindow
-            onClose={handleCloseChat}
-            isExpanded={isExpanded}
-            onToggleExpand={handleToggleExpand}
-          />
+          <div className="size-full overflow-hidden rounded-[calc(2rem-0.375rem)] bg-card border border-border/40 shadow-xs flex flex-col">
+            <ChatWindow
+              onClose={handleCloseChat}
+              isExpanded={isExpanded}
+              onToggleExpand={handleToggleExpand}
+            />
+          </div>
         </div>
       )}
 
@@ -90,15 +92,15 @@ export default function ChatLauncher() {
         <div
           role="dialog"
           aria-label="Welcome message"
-          className="fixed right-4 bottom-22 sm:right-6 sm:bottom-24 z-40 max-w-[320px] rounded-2xl border border-border/80 bg-card/95 p-3.5 shadow-2xl backdrop-blur-md animate-bubble-in motion-reduce:animate-none select-none"
+          className="fixed right-4 bottom-22 sm:right-6 sm:bottom-24 z-40 max-w-[320px] rounded-[1.8rem] p-1.5 bg-muted/40 border border-border shadow-2xl backdrop-blur-md animate-bubble-in motion-reduce:animate-none select-none"
         >
-          <div className="flex items-start gap-2.5">
-            <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
+          <div className="rounded-[calc(1.8rem-0.375rem)] bg-card p-3.5 border border-border/40 shadow-xs flex items-start gap-2.5">
+            <span className="flex size-9 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-primary">
               <BotIcon className="size-5" />
             </span>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5">
-                <span className="text-xs font-semibold text-foreground">DroneTV Assistant</span>
+                <span className="text-xs font-bold text-foreground">DroneTV Assistant</span>
                 <span className="flex items-center gap-1 text-[10px] font-medium text-emerald-600 dark:text-emerald-400">
                   <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
                   Online
@@ -112,7 +114,7 @@ export default function ChatLauncher() {
                 <Button
                   size="xs"
                   onClick={handleOpenChat}
-                  className="rounded-lg text-xs font-medium"
+                  className="rounded-full bg-primary text-primary-foreground font-semibold hover:bg-primary/90 text-xs px-3 shadow-xs"
                 >
                   <SparklesIcon className="size-3 mr-1" />
                   Chat with us
@@ -139,7 +141,7 @@ export default function ChatLauncher() {
         </div>
       )}
 
-      {/* ─── Floating Chat Launcher Button ─────────────────────────── */}
+      {/* ─── Floating Chat Launcher Button (Vibrant Yellow Brand) ─── */}
       <Button
         type="button"
         aria-label={open ? "Close chat window" : "Open chat with DroneTV Assistant"}
@@ -151,7 +153,7 @@ export default function ChatLauncher() {
           }
         }}
         size="icon-lg"
-        className="fixed right-4 bottom-4 sm:right-6 sm:bottom-6 z-40 size-14 rounded-full shadow-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-all hover:scale-105 active:scale-95"
+        className="fixed right-4 bottom-4 sm:right-6 sm:bottom-6 z-40 size-14 rounded-full shadow-2xl bg-primary text-primary-foreground hover:bg-primary/95 transition-all duration-300 hover:scale-105 active:scale-95"
       >
         {open ? (
           <XIcon className="size-6 transition-transform rotate-0 hover:rotate-90" />

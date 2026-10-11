@@ -1,4 +1,4 @@
-import { LayoutDashboardIcon, LogOutIcon } from "lucide-react"
+import { LayoutDashboardIcon, LogOutIcon, PlaneTakeoffIcon } from "lucide-react"
 import { Link, NavLink, useNavigate } from "react-router-dom"
 import ThemeToggle from "@/components/ThemeToggle"
 import { Button } from "@/components/ui/button"
@@ -7,8 +7,8 @@ import { logout } from "@/store/authSlice"
 
 const links = [
   { to: "/", label: "Home" },
-  { to: "/services", label: "Services" },
   { to: "/courses", label: "Courses" },
+  { to: "/services", label: "Services" },
   { to: "/contact", label: "Contact" },
 ]
 
@@ -23,23 +23,35 @@ export default function Navbar() {
   }
 
   return (
-    <header className="border-b border-border bg-card">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-4">
-        <Link to="/" className="font-heading text-xl font-bold tracking-tight text-foreground">
-          ChatBot Academy
+    <header className="sticky top-4 z-40 w-full px-4 sm:px-6">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 rounded-full border border-border/80 bg-card/85 px-4 sm:px-6 shadow-sm backdrop-blur-xl transition-all">
+        {/* Brand Logo */}
+        <Link
+          to="/"
+          className="group flex items-center gap-2.5 font-heading text-sm sm:text-base font-bold tracking-tight text-foreground transition-opacity hover:opacity-90"
+        >
+          <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-xs transition-transform group-hover:scale-105">
+            <PlaneTakeoffIcon className="size-4.5 stroke-[2.2]" />
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span>DroneTV</span>
+            <span className="text-muted-foreground font-medium">Academy</span>
+            <span className="size-1.5 rounded-full bg-primary" />
+          </span>
         </Link>
 
-        <nav className="flex flex-wrap items-center gap-1">
+        {/* Navigation Links */}
+        <nav className="hidden md:flex items-center gap-1 bg-muted/40 p-1 rounded-full border border-border/50">
           {links.map((link) => (
             <NavLink
               key={link.to}
               to={link.to}
               end={link.to === "/"}
               className={({ isActive }) =>
-                `rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                `rounded-full px-3.5 py-1.5 text-xs font-medium transition-all ${
                   isActive
-                    ? "bg-accent text-accent-foreground"
-                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                    ? "bg-background text-foreground shadow-2xs font-semibold"
+                    : "text-muted-foreground hover:text-foreground hover:bg-background/50"
                 }`
               }
             >
@@ -48,22 +60,36 @@ export default function Navbar() {
           ))}
         </nav>
 
+        {/* Actions & Admin */}
         <div className="flex items-center gap-2">
           <ThemeToggle />
           {status === "authenticated" && user ? (
             <>
-              <Button render={<Link to="/admin" />} size="sm">
-                <LayoutDashboardIcon />
+              <Button
+                render={<Link to="/admin" />}
+                size="sm"
+                className="rounded-full bg-primary text-primary-foreground font-medium hover:bg-primary/90 text-xs px-3.5"
+              >
+                <LayoutDashboardIcon className="size-3.5 mr-1" />
                 Dashboard
               </Button>
-              <span className="hidden text-sm text-muted-foreground sm:inline">{user.email}</span>
-              <Button variant="outline" size="sm" onClick={() => void handleLogout()}>
-                <LogOutIcon />
-                Logout
+              <Button
+                variant="ghost"
+                size="icon-xs"
+                onClick={() => void handleLogout()}
+                title="Logout"
+                aria-label="Logout"
+                className="rounded-full text-muted-foreground hover:text-destructive"
+              >
+                <LogOutIcon className="size-4" />
               </Button>
             </>
           ) : (
-            <Button  render={<Link to="/admin/login" />} size="sm">
+            <Button
+              render={<Link to="/admin/login" />}
+              size="sm"
+              className="rounded-full bg-primary text-primary-foreground font-semibold hover:bg-primary/90 text-xs px-4 py-1.5 shadow-xs transition-all active:scale-[0.98]"
+            >
               Admin Login
             </Button>
           )}

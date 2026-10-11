@@ -42,7 +42,7 @@ export default function Contact() {
               <div>
                 <CardTitle className="text-sm text-accent-foreground">Office hours</CardTitle>
                 <CardContent className="px-0 text-sm text-accent-foreground/80">
-                  Saturday – Thursday, 9:00 AM – 6:00 PM (GMT+6)
+                  Saturday - Thursday, 9:00 AM - 6:00 PM (GMT+6)
                 </CardContent>
               </div>
             </CardHeader>

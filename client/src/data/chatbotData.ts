@@ -81,7 +81,7 @@ const RULES: Rule[] = [
       "হায়ার",
     ],
     reply: {
-      text: "Wonderful — tell us what you need in the form below and we will connect you with our aerial operations and GIS team.",
+      text: "Wonderful, tell us what you need in the form below and we will connect you with our aerial operations and GIS team.",
       showForm: true,
       defaultUserType: "Customer",
     },
@@ -229,7 +229,7 @@ const RULES: Rule[] = [
       "অফিস",
     ],
     reply: {
-      text: "You can reach DroneTV & ChatBot Academy directly:\n\n📧 Email: hello@chatbotacademy.com\n📞 Phone / WhatsApp: +880 1712 345678 / +91 75201 23555\n📍 Office: Dhaka, Bangladesh & Hyderabad, India\n🕒 Working Hours: Saturday – Thursday, 9:00 AM – 6:00 PM\n\nYou can also submit an enquiry right here in the chat!",
+      text: "You can reach DroneTV & ChatBot Academy directly:\n\n📧 Email: hello@chatbotacademy.com\n📞 Phone / WhatsApp: +880 1712 345678 / +91 75201 23555\n📍 Office: Dhaka, Bangladesh & Hyderabad, India\n🕒 Working Hours: Saturday - Thursday, 9:00 AM - 6:00 PM\n\nYou can also submit an enquiry right here in the chat!",
     },
   },
   {
@@ -253,7 +253,7 @@ const RULES: Rule[] = [
 ]
 
 export const FALLBACK_REPLY: BotReply = {
-  text: "I didn't quite catch that. You can ask about courses, fees/pricing, duration, services, or contact details — or select one of the quick questions above!\n\n(বাংলায় 'কোর্স', 'ফি', 'সময়' বা 'যোগাযোগ' লিখেও প্রশ্ন করতে পারেন)",
+  text: "I didn't quite catch that. You can ask about courses, fees/pricing, duration, services, or contact details - or select one of the quick questions above!\n\n(বাংলায় 'কোর্স', 'ফি', 'সময়' বা 'যোগাযোগ' লিখেও প্রশ্ন করতে পারেন)",
 }
 
 const escapeRegex = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
