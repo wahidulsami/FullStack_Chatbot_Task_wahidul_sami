@@ -18,7 +18,9 @@ const updateStatus = [protect, adminOnly, validate(updateEnquiryStatusSchema), u
 
 router.get("/", protect, adminOnly, listEnquiries)
 router.get("/:id", protect, adminOnly, getEnquiry)
+router.put("/:id", updateStatus)
 router.patch("/:id", updateStatus)
+router.put("/:id/status", updateStatus)
 router.patch("/:id/status", updateStatus)
 router.delete("/:id", protect, adminOnly, deleteEnquiry)
 

@@ -153,7 +153,14 @@ export async function updateEnquiryStatus(req: AuthRequest, res: Response) {
       return res.status(404).json({ message: "Enquiry not found" })
     }
 
-    enquiry.status = req.body.status
+    if (req.body.status !== undefined) enquiry.status = req.body.status
+    if (req.body.name !== undefined) enquiry.name = req.body.name
+    if (req.body.email !== undefined) enquiry.email = req.body.email
+    if (req.body.phone !== undefined) enquiry.phone = req.body.phone
+    if (req.body.userType !== undefined) enquiry.userType = req.body.userType
+    if (req.body.interest !== undefined) enquiry.interest = req.body.interest
+    if (req.body.message !== undefined) enquiry.message = req.body.message
+
     await enquiry.save()
 
     res.json({ enquiry })

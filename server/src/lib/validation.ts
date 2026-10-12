@@ -45,9 +45,31 @@ export const createEnquirySchema = z.object({
 
 export type CreateEnquiryInput = z.infer<typeof createEnquirySchema>
 
-export const updateEnquiryStatusSchema = z.object({
-  status: z.enum(STATUSES),
-})
+export const updateEnquiryStatusSchema = z
+  .object({
+    status: z.enum(STATUSES).optional(),
+    name: z.string().trim().min(2, "Name must be at least 2 characters").max(100, "Name is too long").optional(),
+    email: email.optional(),
+    phone: z
+      .string()
+      .trim()
+      .min(1, "Phone number is required")
+      .regex(/^\+?[0-9\s-]{7,15}$/, "Invalid phone number (7 to 15 digits)")
+      .max(20, "Phone number is too long")
+      .optional(),
+    userType: z.enum(USER_TYPES).optional(),
+    interest: z.string().trim().min(1, "Interest is required").max(150, "Interest is too long").optional(),
+    message: z
+      .string()
+      .trim()
+      .min(5, "Message is too short (min 5 characters)")
+      .max(2000, "Message cannot exceed 2000 characters")
+      .transform((value) => xss(value))
+      .optional(),
+  })
+  .refine((data) => Object.keys(data).length > 0, {
+    message: "At least one field must be provided for update",
+  })
 
 export type UpdateEnquiryStatusInput = z.infer<typeof updateEnquiryStatusSchema>
 

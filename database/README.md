@@ -39,14 +39,17 @@ Stores visitor enquiries submitted through the rule-based Chatbot assistant and 
 | `phone` | String | Yes | Standard phone regex (`/^\+?[0-9\s-]{7,15}$/`) |
 | `userType` | String | Yes | Enum: `Student`, `Customer`, `Other` |
 | `interest` | String | Yes | Topic or service of interest (up to 150 chars) |
-| `message` | String | Yes | 5 to 5000 characters |
+| `message` | String | Yes | 5 to 2000 characters |
 | `status` | String | Default: `New` | Enum: `New`, `Contacted`, `In Progress`, `Closed` |
 | `createdAt` | Date | Auto | Timestamps enabled |
 | `updatedAt` | Date | Auto | Timestamps enabled |
 
 **Indexes:**
 - `{ status: 1, userType: 1 }`: Fast compound filtering on admin dashboard.
-- `{ createdAt: -1 }`: Rapid reverse-chronological sorting.
+- `{ status: 1, createdAt: -1 }`: Rapid status filtering with reverse-chronological sorting.
+- `{ userType: 1, createdAt: -1 }`: Fast user type filtering with reverse-chronological sorting.
+- `{ name: 1, createdAt: -1 }`: Optimized sorting by name with secondary timestamp sort.
+- `{ createdAt: -1 }`: Rapid default reverse-chronological sorting.
 
 ---
 
@@ -73,5 +76,5 @@ Per project compliance, test fixtures must never appear to be real customer subm
 | Command | Purpose |
 | :--- | :--- |
 | `npm run seed:admin` | One-time admin user creation using `ADMIN_*` variables in `server/.env`. Passwords are encrypted using bcrypt before storage. |
-| `npm run seed:demo` | Inserts or updates 3 verified, isolated demo enquiries tagged with `[DEMO]`. |
+| `npm run seed:demo` | Inserts or updates 55 verified, isolated demo enquiries tagged with `[DEMO]` spanning across 45 days. |
 | `npm run seed:demo -- --clean` | Clears all prior test/junk records and seeds fresh, clearly labeled demo fixtures. |

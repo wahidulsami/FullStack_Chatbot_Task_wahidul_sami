@@ -17,3 +17,7 @@ build/
 .skills/
 skills/
 skills-lock.json
+
+# Private Walkthrough Script
+docs/VIDEO_SCRIPT.md
+*VIDEO_SCRIPT.md

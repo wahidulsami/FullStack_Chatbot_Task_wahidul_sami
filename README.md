@@ -59,11 +59,14 @@ DroneTV (`dronetv.in`) is India's dedicated digital media platform and industry 
    - Floating fluid island navigation with responsive mobile/tablet drawer.
 3. **Lead & Enquiry Management:**
    - Public enquiry submission via Chatbot or Contact page.
+   - Strict validation capping message length to 2000 characters with keyboard and clipboard guards.
    - Stored in MongoDB with status tracking (`New`, `Contacted`, `In Progress`, `Closed`).
    - Compound indexes for sub-millisecond filtering and reverse-chronological sorting.
-4. **Authenticated Admin Portal:**
-   - Secure login with bcrypt authentication.
-   - Real-time enquiry table with search, status filtering, and userType breakdown.
+4. **Authenticated Admin Portal & Server-Side Pagination:**
+   - Secure login with bcrypt authentication and JWT tokens.
+   - Production server-side pagination with configurable page sizes (10, 20, 50, 100 records).
+   - Real-time debounced keyword search, status filtering, and userType segmentation.
+   - Bi-directional column sorting (Date, Name, Status, User Type) across the full dataset.
    - Status updates, detailed inspection drawer, and deletion controls.
 
 ---

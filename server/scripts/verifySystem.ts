@@ -166,21 +166,64 @@ async function runTests() {
 
     const createdId = createData.enquiry?._id
 
-    // 2. Reject invalid enquiry
-    const invalidRes = await fetch(`${baseUrl}/enquiries`, {
+    // 2. Reject empty required fields
+    const emptyRes = await fetch(`${baseUrl}/enquiries`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: "A", email: "not-an-email", phone: "123" }),
+      body: JSON.stringify({}),
     })
-    const invalidData = (await invalidRes.json()) as { errors?: unknown }
+    const emptyData = (await emptyRes.json()) as { errors?: unknown }
 
     assertApi(
-      "POST /api/enquiries - 400 Bad Request on invalid input",
-      invalidRes.status === 400 && Array.isArray(invalidData.errors),
-      `Status ${invalidRes.status}`
+      "POST /api/enquiries - 400 Bad Request on empty required fields",
+      emptyRes.status === 400 && Array.isArray(emptyData.errors),
+      `Status ${emptyRes.status}`
     )
 
-    // 3. Admin token generation & verification
+    // 3. Reject invalid email format
+    const invalidEmailRes = await fetch(`${baseUrl}/enquiries`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: "Test User",
+        email: "not-a-valid-email",
+        phone: "+91 9876543210",
+        userType: "Student",
+        interest: "Drone Pilot Training",
+        message: "Valid test message longer than five chars",
+      }),
+    })
+    assertApi(
+      "POST /api/enquiries - 400 Bad Request on invalid email format",
+      invalidEmailRes.status === 400
+    )
+
+    // 4. Reject invalid phone number
+    const invalidPhoneRes = await fetch(`${baseUrl}/enquiries`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: "Test User",
+        email: "valid@example.com",
+        phone: "123", // too short, requires 7-15 digits
+        userType: "Student",
+        interest: "Drone Pilot Training",
+        message: "Valid test message longer than five chars",
+      }),
+    })
+    assertApi(
+      "POST /api/enquiries - 400 Bad Request on invalid phone number",
+      invalidPhoneRes.status === 400
+    )
+
+    // 5. Enforce Authentication Guard on Protected Route
+    const unauthorizedRes = await fetch(`${baseUrl}/enquiries`)
+    assertApi(
+      "GET /api/enquiries - 401 Unauthorized without token",
+      unauthorizedRes.status === 401
+    )
+
+    // 6. Admin token generation & verification
     const adminEmail = process.env.ADMIN_EMAIL || "ipagegroup@gmail.com"
     const adminUser = await User.findOne({ email: adminEmail })
     const adminToken = signAccessToken({
@@ -190,21 +233,41 @@ async function runTests() {
 
     assertApi("Admin JWT generated for API inspection", !!adminToken)
 
-    // 4. GET /api/enquiries
+    // 7. GET /api/enquiries (Full List with Pagination & Stats)
     const getRes = await fetch(`${baseUrl}/enquiries`, {
       headers: { Authorization: `Bearer ${adminToken}` },
     })
-    const getData = (await getRes.json()) as { enquiries?: unknown[] }
+    const getData = (await getRes.json()) as { enquiries?: unknown[]; pagination?: unknown }
 
     assertApi(
-      "GET /api/enquiries - 200 OK with list",
-      getRes.status === 200 && Array.isArray(getData.enquiries),
+      "GET /api/enquiries - 200 OK with list and pagination metadata",
+      getRes.status === 200 && Array.isArray(getData.enquiries) && !!getData.pagination,
       `Status ${getRes.status}`
     )
 
-    // 5. PATCH /api/enquiries/:id/status
     if (createdId) {
-      const patchRes = await fetch(`${baseUrl}/enquiries/${createdId}/status`, {
+      // 8. GET /api/enquiries/:id (Single enquiry)
+      const getSingleRes = await fetch(`${baseUrl}/enquiries/${createdId}`, {
+        headers: { Authorization: `Bearer ${adminToken}` },
+      })
+      const getSingleData = (await getSingleRes.json()) as { enquiry?: { _id: string } }
+      assertApi(
+        "GET /api/enquiries/:id - 200 OK with single enquiry",
+        getSingleRes.status === 200 && getSingleData.enquiry?._id === createdId
+      )
+
+      // 9. GET non-existing enquiry ID -> 404
+      const nonExistentId = "507f1f77bcf86cd799439011"
+      const get404Res = await fetch(`${baseUrl}/enquiries/${nonExistentId}`, {
+        headers: { Authorization: `Bearer ${adminToken}` },
+      })
+      assertApi(
+        "GET /api/enquiries/:id - 404 on non-existing enquiry ID",
+        get404Res.status === 404
+      )
+
+      // 10. PATCH /api/enquiries/:id (Update status)
+      const patchRes = await fetch(`${baseUrl}/enquiries/${createdId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -215,12 +278,30 @@ async function runTests() {
       const patchData = (await patchRes.json()) as { enquiry?: { status: string } }
 
       assertApi(
-        "PATCH /api/enquiries/:id/status - 200 Updated",
+        "PATCH /api/enquiries/:id - 200 Updated status",
         patchRes.status === 200 && patchData.enquiry?.status === "In Progress",
         `Status ${patchRes.status}: ${JSON.stringify(patchData)}`
       )
 
-      // 6. DELETE /api/enquiries/:id
+      // 11. PUT /api/enquiries/:id (Update enquiry)
+      const putRes = await fetch(`${baseUrl}/enquiries/${createdId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${adminToken}`,
+        },
+        body: JSON.stringify({ status: "Contacted", interest: "[UPDATED] Precision Agriculture" }),
+      })
+      const putData = (await putRes.json()) as { enquiry?: { status: string; interest: string } }
+
+      assertApi(
+        "PUT /api/enquiries/:id - 200 Updated enquiry fields",
+        putRes.status === 200 &&
+          putData.enquiry?.status === "Contacted" &&
+          putData.enquiry?.interest === "[UPDATED] Precision Agriculture"
+      )
+
+      // 12. DELETE /api/enquiries/:id
       const delRes = await fetch(`${baseUrl}/enquiries/${createdId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${adminToken}` },
@@ -230,6 +311,16 @@ async function runTests() {
         "DELETE /api/enquiries/:id - 200 Deleted",
         delRes.status === 200,
         `Status ${delRes.status}`
+      )
+
+      // 13. DELETE non-existing enquiry ID -> 404
+      const del404Res = await fetch(`${baseUrl}/enquiries/${createdId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${adminToken}` },
+      })
+      assertApi(
+        "DELETE /api/enquiries/:id - 404 on already deleted enquiry ID",
+        del404Res.status === 404
       )
     }
 
