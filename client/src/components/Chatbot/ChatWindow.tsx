@@ -171,8 +171,8 @@ export default function ChatWindow({ onClose, isExpanded = false, onToggleExpand
           <div className="relative flex size-8 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary shadow-2xs">
             <BotIcon className="size-4.5" />
             <span className="absolute -top-0.5 -right-0.5 flex size-2.5">
-              <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex size-2.5 rounded-full bg-emerald-500" />
+              <span className="absolute inline-flex size-full animate-ping rounded-xl bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex size-2.5 rounded-xl bg-emerald-500" />
             </span>
           </div>
           <div className="min-w-0 flex-1">
@@ -180,12 +180,12 @@ export default function ChatWindow({ onClose, isExpanded = false, onToggleExpand
               <h2 className="truncate text-sm font-semibold tracking-tight text-foreground">
                 DroneTV Assistant
               </h2>
-              <span className="hidden sm:inline-flex rounded-full bg-primary/15 px-1.5 py-0.2 text-[10px] font-semibold text-primary">
+              <span className="hidden sm:inline-flex rounded-xl bg-primary/15 px-1.5 py-0.2 text-[10px] font-semibold text-primary">
                 AI Assistant
               </span>
             </div>
             <p className="flex items-center gap-1 text-[11px] text-muted-foreground">
-              <span className="size-1.5 rounded-full bg-emerald-500" />
+              <span className="size-1.5 rounded-xl bg-emerald-500" />
               Online • Instant answers
             </p>
           </div>
@@ -277,7 +277,7 @@ export default function ChatWindow({ onClose, isExpanded = false, onToggleExpand
               {/* ─── Vertical Suggestions (7 Quick Questions) ────────── */}
               {showSuggestions && (
                 <MessageScrollerItem>
-                  <div className="mt-2 rounded-2xl border border-border/80 bg-card p-3 shadow-xs animate-bubble-in">
+                  <div className="mt-2 rounded-xl border border-border/80 bg-card p-3 shadow-xs animate-bubble-in">
                     <div className="flex items-center justify-between pb-2 mb-2 border-b border-border/50">
                       <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
                         <SparklesIcon className="size-3.5 text-primary" />
@@ -299,7 +299,7 @@ export default function ChatWindow({ onClose, isExpanded = false, onToggleExpand
                           className="group flex w-full items-center justify-between gap-2.5 rounded-xl border border-border/60 bg-muted/40 px-3 py-2 text-left text-xs font-medium text-foreground transition-all hover:border-primary/60 hover:bg-primary/5 hover:text-primary active:scale-[0.99] disabled:pointer-events-none disabled:opacity-50"
                         >
                           <div className="flex items-center gap-2.5 min-w-0">
-                            <span className="flex size-5 shrink-0 items-center justify-center rounded-md bg-background text-[11px] font-bold text-muted-foreground group-hover:bg-primary group-hover:text-primary-foreground border border-border transition-colors">
+                            <span className="flex size-5 shrink-0 items-center justify-center rounded-xl bg-background text-[11px] font-bold text-muted-foreground group-hover:bg-primary group-hover:text-primary-foreground border border-border transition-colors">
                               {index + 1}
                             </span>
                             <span className="truncate">{question}</span>

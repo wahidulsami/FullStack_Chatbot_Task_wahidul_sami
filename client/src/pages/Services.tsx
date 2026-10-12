@@ -66,8 +66,8 @@ export default function Services() {
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6 py-12 space-y-12">
       {/* Header with Double-Bezel Framing */}
-      <div className="rounded-[2rem] p-1.5 bg-muted/40 border border-border/80 shadow-xs">
-        <div className="rounded-[calc(2rem-0.375rem)] bg-card p-8 sm:p-10 border border-border/40 text-center space-y-3">
+      <div className="rounded-xl p-1.5 bg-muted/40 border border-border/80 shadow-xs">
+        <div className="rounded-[calc(1.225rem-0.375rem)] bg-card p-8 sm:p-10 border border-border/40 text-center space-y-3">
           <div className="inline-flex items-center gap-1.5 rounded-xl bg-primary/10 px-3.5 py-1 text-xs font-semibold text-primary">
             <SparklesIcon className="size-3.5" />
             Enterprise Aerial Solutions
@@ -87,11 +87,11 @@ export default function Services() {
         {services.map((service) => (
           <div
             key={service.title}
-            className="rounded-[2rem] p-1.5 bg-muted/40 border border-border/80 shadow-xs hover:border-primary/50 transition-colors"
+            className="rounded-xl p-1.5 bg-muted/40 border border-border/80 shadow-xs hover:border-primary/50 transition-colors"
           >
-            <div className="rounded-[calc(2rem-0.375rem)] bg-card p-6 sm:p-8 h-full flex flex-col justify-between space-y-6 border border-border/40">
+            <div className="rounded-[calc(1.225rem-0.375rem)] bg-card p-6 sm:p-8 h-full flex flex-col justify-between space-y-6 border border-border/40">
               <div className="space-y-4">
-                <span className="flex size-12 items-center justify-center rounded-2xl bg-primary/15 text-primary">
+                <span className="flex size-12 items-center justify-center rounded-xl bg-primary/15 text-primary">
                   <service.icon className="size-6 stroke-[2]" />
                 </span>
 

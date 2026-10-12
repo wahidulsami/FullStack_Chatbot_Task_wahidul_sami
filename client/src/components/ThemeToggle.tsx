@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react"
 import { CheckIcon, LaptopIcon, MoonIcon, SunIcon } from "lucide-react"
 import { useTheme } from "next-themes"
 import { cn } from "cn"
@@ -11,6 +12,13 @@ import {
 
 export default function ThemeToggle() {
   const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  const activeTheme = mounted ? theme : undefined
 
   return (
     <DropdownMenu>
@@ -30,12 +38,12 @@ export default function ThemeToggle() {
       <DropdownMenuContent
         align="end"
         sideOffset={8}
-        className="w-36 rounded-2xl p-1.5 shadow-xl border border-border bg-popover/95 backdrop-blur-xl"
+        className="w-36 rounded-xl p-1.5 shadow-xl border border-border bg-popover/95 backdrop-blur-xl"
       >
         <DropdownMenuItem
           className={cn(
             "flex items-center justify-between rounded-xl px-2.5 py-2 text-xs font-semibold cursor-pointer transition-colors",
-            theme === "light"
+            activeTheme === "light"
               ? "bg-primary/15 text-primary font-bold hover:bg-primary/20"
               : "text-foreground hover:bg-muted"
           )}
@@ -45,13 +53,13 @@ export default function ThemeToggle() {
             <SunIcon className="size-3.5 text-amber-500" />
             <span>Light</span>
           </span>
-          {theme === "light" && <CheckIcon className="size-3.5 text-primary" />}
+          {activeTheme === "light" && <CheckIcon className="size-3.5 text-primary" />}
         </DropdownMenuItem>
 
         <DropdownMenuItem
           className={cn(
             "flex items-center justify-between rounded-xl px-2.5 py-2 text-xs font-semibold cursor-pointer transition-colors",
-            theme === "dark"
+            activeTheme === "dark"
               ? "bg-primary/15 text-primary font-bold hover:bg-primary/20"
               : "text-foreground hover:bg-muted"
           )}
@@ -61,13 +69,13 @@ export default function ThemeToggle() {
             <MoonIcon className="size-3.5 text-sky-400" />
             <span>Dark</span>
           </span>
-          {theme === "dark" && <CheckIcon className="size-3.5 text-primary" />}
+          {activeTheme === "dark" && <CheckIcon className="size-3.5 text-primary" />}
         </DropdownMenuItem>
 
         <DropdownMenuItem
           className={cn(
             "flex items-center justify-between rounded-xl px-2.5 py-2 text-xs font-semibold cursor-pointer transition-colors",
-            theme === "system"
+            activeTheme === "system"
               ? "bg-primary/15 text-primary font-bold hover:bg-primary/20"
               : "text-foreground hover:bg-muted"
           )}
@@ -77,7 +85,7 @@ export default function ThemeToggle() {
             <LaptopIcon className="size-3.5 text-muted-foreground" />
             <span>System</span>
           </span>
-          {theme === "system" && <CheckIcon className="size-3.5 text-primary" />}
+          {activeTheme === "system" && <CheckIcon className="size-3.5 text-primary" />}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

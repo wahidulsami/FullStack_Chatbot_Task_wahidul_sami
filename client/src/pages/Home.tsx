@@ -5,7 +5,6 @@ import {
   CheckCircle2Icon,
   CompassIcon,
   GraduationCapIcon,
-  RadioIcon,
   ShieldCheckIcon,
   SparklesIcon,
 } from "lucide-react"
@@ -30,8 +29,8 @@ export default function Home() {
       <section className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] items-center pt-4 sm:pt-10">
         <div className="space-y-6">
           {/* Micro Eyebrow */}
-          <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3.5 py-1 text-[11px] font-semibold text-foreground tracking-wide">
-            <span className="size-2 rounded-full bg-primary animate-pulse" />
+          <div className="inline-flex items-center gap-2 rounded-xl border border-primary/30 bg-primary/10 px-3.5 py-1 text-[11px] font-semibold text-foreground tracking-wide">
+            <span className="size-2 rounded-xl bg-primary animate-pulse" />
             <span>DGCA ACCREDITED FLIGHT ACADEMY</span>
           </div>
 
@@ -53,10 +52,10 @@ export default function Home() {
             <Button
               render={<Link to="/courses" />}
               size="lg"
-              className="group rounded-full bg-primary text-primary-foreground font-semibold px-6 py-3 text-sm shadow-sm hover:bg-primary/95 transition-all duration-300 active:scale-[0.98] inline-flex items-center gap-3"
+              className="group rounded-xl bg-primary text-primary-foreground font-semibold px-6 py-3 text-sm shadow-sm hover:bg-primary/95 transition-all duration-300 active:scale-[0.98] inline-flex items-center gap-3"
             >
               <span>Explore Programs</span>
-              <span className="flex size-7 items-center justify-center rounded-full bg-primary-foreground/10 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-[1px]">
+              <span className="flex size-7 items-center justify-center rounded-xl bg-primary-foreground/10 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-[1px]">
                 <ArrowRightIcon className="size-3.5 stroke-[2.5]" />
               </span>
             </Button>
@@ -65,7 +64,7 @@ export default function Home() {
               variant="outline"
               size="lg"
               onClick={triggerChat}
-              className="rounded-full border-border/80 bg-background/80 hover:bg-muted font-medium px-5 py-3 text-sm transition-all"
+              className="rounded-xl border-border/80 bg-background/80 hover:bg-muted font-medium px-5 py-3 text-sm transition-all"
             >
               <BotIcon className="mr-2 size-4 text-primary" />
               Ask Assistant
@@ -80,7 +79,7 @@ export default function Home() {
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle2Icon className="size-4 text-emerald-500" />
-              <span>Bilingual Core (English & বাংলা)</span>
+              <span>Bilingual Core </span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle2Icon className="size-4 text-emerald-500" />
@@ -90,49 +89,7 @@ export default function Home() {
         </div>
 
         {/* ─── Hero Visual: Double-Bezel Telemetry HUD ────────────────── */}
-        <div className="relative group">
-          {/* Outer Shell (Concentric Doppelrand) */}
-          <div className="rounded-[2.2rem] p-2 bg-muted/40 border border-border/80 shadow-xl ring-1 ring-border/20 backdrop-blur-md">
-            {/* Inner Core */}
-            <div className="relative rounded-[calc(2.2rem-0.5rem)] overflow-hidden bg-card border border-border/40 aspect-[4/3] sm:aspect-[16/11]">
-              <img
-                src="https://picsum.photos/seed/dronetv-sky-falcon/900/650"
-                alt="DroneTV autonomous flight inspection"
-                className="size-full object-cover brightness-90 transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-105"
-                loading="eager"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-
-              {/* HUD Telemetry Overlay Pills */}
-              <div className="absolute top-4 left-4 right-4 flex items-center justify-between text-[11px] font-mono text-white/90">
-                <span className="flex items-center gap-1.5 rounded-full bg-black/60 px-3 py-1 backdrop-blur-md border border-white/15">
-                  <RadioIcon className="size-3 text-emerald-400 animate-pulse" />
-                  UAV-07 ACTIVE
-                </span>
-                <span className="rounded-full bg-black/60 px-3 py-1 backdrop-blur-md border border-white/15">
-                  RTK FIX: 24 SATS
-                </span>
-              </div>
-
-              {/* Bottom Card Info Strip */}
-              <div className="absolute bottom-4 left-4 right-4 rounded-xl bg-black/75 p-3.5 backdrop-blur-md border border-white/15 text-white">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="text-xs font-semibold text-white">Autonomous Flight Lab</div>
-                    <div className="text-[11px] text-white/70">Geospatial Survey & AI Sensor Suite</div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={triggerChat}
-                    className="rounded-lg bg-primary px-3 py-1.5 text-xs font-bold text-primary-foreground shadow-xs hover:bg-primary/90 transition-transform active:scale-95"
-                  >
-                    Quick Query
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+  
       </section>
 
       {/* ─── Social Proof & Industry Trust Strip ────────────────────── */}
@@ -153,7 +110,7 @@ export default function Home() {
       {/* ─── Asymmetrical Bento Grid ─────────────────────────────────── */}
       <section className="space-y-6">
         <div className="space-y-2">
-          <div className="inline-flex items-center gap-1.5 rounded-md bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary">
+          <div className="inline-flex items-center gap-1.5 rounded-xl bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary">
             <SparklesIcon className="size-3.5" />
             Core Capabilities
           </div>
@@ -164,10 +121,10 @@ export default function Home() {
 
         <div className="grid gap-6 md:grid-cols-12">
           {/* Bento Tile 1 (Span 7): Photogrammetry & Survey */}
-          <div className="md:col-span-7 rounded-[2rem] p-1.5 bg-muted/40 border border-border/80 shadow-xs">
-            <div className="rounded-[calc(2rem-0.375rem)] bg-card p-6 sm:p-8 h-full flex flex-col justify-between space-y-6 border border-border/40">
+          <div className="md:col-span-7 rounded-xl p-1.5 bg-muted/40 border border-border/80 shadow-xs">
+            <div className="rounded-[calc(1.225rem-0.375rem)] bg-card p-6 sm:p-8 h-full flex flex-col justify-between space-y-6 border border-border/40">
               <div className="space-y-3">
-                <span className="flex size-11 items-center justify-center rounded-2xl bg-primary/15 text-primary">
+                <span className="flex size-11 items-center justify-center rounded-xl bg-primary/15 text-primary">
                   <CompassIcon className="size-6 stroke-[2]" />
                 </span>
                 <h3 className="font-heading text-xl font-bold text-foreground">
@@ -196,10 +153,10 @@ export default function Home() {
           </div>
 
           {/* Bento Tile 2 (Span 5): Pilot Certification */}
-          <div className="md:col-span-5 rounded-[2rem] p-1.5 bg-muted/40 border border-border/80 shadow-xs">
-            <div className="rounded-[calc(2rem-0.375rem)] bg-card p-6 sm:p-8 h-full flex flex-col justify-between space-y-6 border border-border/40">
+          <div className="md:col-span-5 rounded-xl p-1.5 bg-muted/40 border border-border/80 shadow-xs">
+            <div className="rounded-[calc(1.225rem-0.375rem)] bg-card p-6 sm:p-8 h-full flex flex-col justify-between space-y-6 border border-border/40">
               <div className="space-y-3">
-                <span className="flex size-11 items-center justify-center rounded-2xl bg-primary/15 text-primary">
+                <span className="flex size-11 items-center justify-center rounded-xl bg-primary/15 text-primary">
                   <GraduationCapIcon className="size-6 stroke-[2]" />
                 </span>
                 <h3 className="font-heading text-xl font-bold text-foreground">
@@ -228,15 +185,15 @@ export default function Home() {
           </div>
 
           {/* Bento Tile 3 (Span 5): Interactive Chatbot Core */}
-          <div className="md:col-span-5 rounded-[2rem] p-1.5 bg-muted/40 border border-border/80 shadow-xs">
-            <div className="rounded-[calc(2rem-0.375rem)] bg-card p-6 sm:p-8 h-full flex flex-col justify-between space-y-5 border border-border/40">
+          <div className="md:col-span-5 rounded-xl p-1.5 bg-muted/40 border border-border/80 shadow-xs">
+            <div className="rounded-[calc(1.225rem-0.375rem)] bg-card p-6 sm:p-8 h-full flex flex-col justify-between space-y-5 border border-border/40">
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="flex size-10 items-center justify-center rounded-xl bg-primary/15 text-primary">
                     <BotIcon className="size-5" />
                   </span>
                   <span className="flex items-center gap-1.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
-                    <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="size-1.5 rounded-xl bg-emerald-500 animate-pulse" />
                     24/7 Rule Engine
                   </span>
                 </div>
@@ -264,7 +221,7 @@ export default function Home() {
 
               <Button
                 onClick={triggerChat}
-                className="w-full rounded-full bg-primary text-primary-foreground font-semibold hover:bg-primary/90 text-xs shadow-xs"
+                className="w-full rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 text-xs shadow-xs"
               >
                 Open Full Assistant
               </Button>
@@ -272,11 +229,10 @@ export default function Home() {
           </div>
 
           {/* Bento Tile 4 (Span 7): Real Field Metrics */}
-          <div className="md:col-span-7 rounded-[2rem] p-1.5 bg-muted/40 border border-border/80 shadow-xs">
-            <div className="rounded-[calc(2rem-0.375rem)] bg-card p-6 sm:p-8 h-full flex flex-col justify-between space-y-6 border border-border/40">
+          <div className="md:col-span-7 rounded-xl p-1.5 bg-muted/40 border border-border/80 shadow-xs">
+            <div className="rounded-[calc(1.225rem-0.375rem)] bg-card p-6 sm:p-8 h-full flex flex-col justify-between space-y-6 border border-border/40">
               <div className="space-y-3">
-                <span className="flex size-11 items-center justify-center rounded-2xl bg-primary/15 text-primary">
-                  <ShieldCheckIcon className="size-6 stroke-[2]" />
+                <span className="flex size-11 items-center justify-center rounded-xl bg-primary/15 text-primary">                  <ShieldCheckIcon className="size-6 stroke-[2]" />
                 </span>
                 <h3 className="font-heading text-xl font-bold text-foreground">
                   Verified Industry Track Record

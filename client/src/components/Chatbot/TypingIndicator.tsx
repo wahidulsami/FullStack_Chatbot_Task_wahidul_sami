@@ -11,11 +11,11 @@ export default function TypingIndicator() {
       aria-label="Assistant is typing"
       className="animate-bubble-in motion-reduce:animate-none"
     >
-      <MessageAvatar className="size-7 rounded-full bg-primary/15 text-primary">
+      <MessageAvatar className="size-7 rounded-xl bg-primary/15 text-primary">
         <BotIcon className="size-4" />
       </MessageAvatar>
       <MessageContent>
-        <Bubble variant="muted" className="rounded-2xl border border-border/40">
+        <Bubble variant="muted" className="rounded-xl border border-border/40">
           <BubbleContent className="flex items-center gap-2 px-3 py-2 text-xs text-muted-foreground">
             <span className="font-medium tracking-tight">Thinking</span>
             <div className="flex items-center gap-1">
@@ -23,7 +23,7 @@ export default function TypingIndicator() {
                 <span
                   key={delay}
                   style={{ animationDelay: `${delay}ms` }}
-                  className="size-1.5 rounded-full bg-primary animate-typing-dot motion-reduce:animate-none"
+                  className="size-1.5 rounded-xl bg-primary animate-typing-dot motion-reduce:animate-none"
                 />
               ))}
             </div>

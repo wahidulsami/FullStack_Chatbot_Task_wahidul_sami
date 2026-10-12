@@ -40,8 +40,8 @@ export default function Contact() {
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6 py-12 space-y-12">
       {/* Header with Double-Bezel Framing */}
-      <div className="rounded-[2rem] p-1.5 bg-muted/40 border border-border/80 shadow-xs">
-        <div className="rounded-[calc(2rem-0.375rem)] bg-card p-8 sm:p-10 border border-border/40 text-center space-y-3">
+      <div className="rounded-xl p-1.5 bg-muted/40 border border-border/80 shadow-xs">
+        <div className="rounded-[calc(1.225rem-0.375rem)] bg-card p-8 sm:p-10 border border-border/40 text-center space-y-3">
           <div className="inline-flex items-center gap-1.5 rounded-xl bg-primary/10 px-3.5 py-1 text-xs font-semibold text-primary">
             <MessageSquareIcon className="size-3.5" />
             Direct Communication Hub
@@ -63,10 +63,10 @@ export default function Contact() {
           {contactItems.map((item) => (
             <div
               key={item.label}
-              className="rounded-[1.8rem] p-1.5 bg-muted/40 border border-border/80 shadow-2xs hover:border-primary/50 transition-colors"
+              className="rounded-xl p-1.5 bg-muted/40 border border-border/80 shadow-2xs hover:border-primary/50 transition-colors"
             >
-              <div className="rounded-[calc(1.8rem-0.375rem)] bg-card border border-border/40 p-4 sm:p-5 flex items-start gap-3.5">
-                <span className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-primary">
+              <div className="rounded-[calc(1.225rem-0.375rem)] bg-card border border-border/40 p-4 sm:p-5 flex items-start gap-3.5">
+                <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
                   <item.icon className="size-5 stroke-[2]" />
                 </span>
                 <div className="min-w-0 flex-1">
@@ -85,9 +85,9 @@ export default function Contact() {
           ))}
 
           {/* Operational Hours Card */}
-          <div className="rounded-[1.8rem] p-1.5 bg-muted/40 border border-border/80 shadow-2xs">
-            <div className="rounded-[calc(1.8rem-0.375rem)] bg-card border border-border/40 p-4 sm:p-5 flex items-start gap-3.5">
-              <span className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-primary">
+          <div className="rounded-xl p-1.5 bg-muted/40 border border-border/80 shadow-2xs">
+            <div className="rounded-[calc(1.225rem-0.375rem)] bg-card border border-border/40 p-4 sm:p-5 flex items-start gap-3.5">
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
                 <ClockIcon className="size-5 stroke-[2]" />
               </span>
               <div>
@@ -105,8 +105,8 @@ export default function Contact() {
           </div>
 
           {/* Instant Assistant Callout */}
-          <div className="rounded-[1.8rem] p-1.5 bg-primary/10 border border-primary/25 shadow-2xs">
-            <div className="rounded-[calc(1.8rem-0.375rem)] bg-card/90 p-5 space-y-3">
+          <div className="rounded-xl p-1.5 bg-primary/10 border border-primary/25 shadow-2xs">
+            <div className="rounded-[calc(1.225rem-0.375rem)] bg-card/90 p-5 space-y-3">
               <div className="flex items-center gap-2 text-xs font-bold text-primary">
                 <BotIcon className="size-4" />
                 <span>Prefer Instant Answers?</span>

@@ -253,7 +253,7 @@ const RULES: Rule[] = [
 ]
 
 export const FALLBACK_REPLY: BotReply = {
-  text: "I didn't quite catch that. You can ask about courses, fees/pricing, duration, services, or contact details - or select one of the quick questions above!\n\n(বাংলায় 'কোর্স', 'ফি', 'সময়' বা 'যোগাযোগ' লিখেও প্রশ্ন করতে পারেন)",
+  text: "I didn't quite catch that. You can ask about courses, fees/pricing, duration, services, or contact details - or select one of the quick questions above!",
 }
 
 const escapeRegex = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")

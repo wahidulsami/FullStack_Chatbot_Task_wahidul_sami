@@ -70,7 +70,7 @@ export default function EnquiryDetails({
 
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-h-[85vh] overflow-y-auto overflow-x-hidden sm:max-w-2xl rounded-[2rem] border border-border bg-card p-6 sm:p-8 shadow-2xl min-w-0">
+      <DialogContent className="max-h-[85vh] overflow-y-auto overflow-x-hidden sm:max-w-2xl rounded-xl border border-border bg-card p-6 sm:p-8 shadow-2xl min-w-0">
         <DialogHeader className="space-y-1 min-w-0">
           <DialogTitle className="font-heading text-xl sm:text-2xl font-bold text-foreground pr-8 break-all [overflow-wrap:anywhere]">
             {enquiry.name}
@@ -114,7 +114,7 @@ export default function EnquiryDetails({
             <p
               ref={messageRef}
               className={cn(
-                "rounded-2xl border border-border/60 bg-muted/50 p-4 text-sm break-all [overflow-wrap:anywhere] whitespace-pre-wrap text-foreground leading-relaxed min-w-0 max-w-full",
+                "rounded-xl border border-border/60 bg-muted/50 p-4 text-sm break-all [overflow-wrap:anywhere] whitespace-pre-wrap text-foreground leading-relaxed min-w-0 max-w-full",
                 !expanded && "max-h-40 overflow-hidden"
               )}
             >
@@ -122,7 +122,7 @@ export default function EnquiryDetails({
             </p>
 
             {!expanded && needsToggle && (
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-14 rounded-b-2xl bg-gradient-to-t from-muted/90 to-transparent" />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-14 rounded-b-xl bg-gradient-to-t from-muted/90 to-transparent" />
             )}
           </div>
 
@@ -130,7 +130,7 @@ export default function EnquiryDetails({
             <Button
               variant="outline"
               size="sm"
-              className="mt-2 rounded-full text-xs"
+              className="mt-2 rounded-xl text-xs"
               onClick={() => setExpanded((value) => !value)}
             >
               {expanded ? (

@@ -33,7 +33,7 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-4 z-40 w-full px-4 sm:px-6">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 rounded-2xl border border-border/80 bg-card/85 px-4 sm:px-6 shadow-sm backdrop-blur-xl transition-all">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 rounded-xl border border-border/80 bg-card/85 px-4 sm:px-6 shadow-sm backdrop-blur-xl transition-all">
         {/* Brand Logo */}
         <Link
           to="/"
@@ -46,7 +46,7 @@ export default function Navbar() {
           <span className="flex items-center gap-1.5">
             <span>DroneTV</span>
             <span className="text-muted-foreground font-medium hidden xs:inline">Academy</span>
-            <span className="size-1.5 rounded-full bg-primary" />
+            <span className="size-1.5 rounded-xl bg-primary" />
           </span>
         </Link>
 
@@ -122,8 +122,8 @@ export default function Navbar() {
 
       {/* Mobile & Tablet Dropdown Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden mt-2 mx-auto max-w-6xl rounded-[1.8rem] p-1.5 bg-muted/40 border border-border shadow-2xl backdrop-blur-xl animate-bubble-in">
-          <div className="rounded-[calc(1.8rem-0.375rem)] bg-card border border-border/40 p-4 space-y-3">
+        <div className="md:hidden mt-2 mx-auto max-w-6xl rounded-xl p-1.5 bg-muted/40 border border-border shadow-2xl backdrop-blur-xl animate-bubble-in">
+          <div className="rounded-[calc(1.225rem-0.375rem)] bg-card border border-border/40 p-4 space-y-3">
             <nav className="flex flex-col gap-1">
               {links.map((link) => (
                 <NavLink

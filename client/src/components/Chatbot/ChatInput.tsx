@@ -12,7 +12,7 @@ type Props = {
 export default function ChatInput({
   onSend,
   disabled = false,
-  placeholder = "Type your question in English or বাংলা...",
+  placeholder = "Type your question in English...",
 }: Props) {
   const [value, setValue] = useState("")
 
@@ -56,7 +56,7 @@ export default function ChatInput({
           size="icon-xs"
           disabled={!canSubmit}
           aria-label="Send message"
-          className="size-7 shrink-0 rounded-lg bg-primary text-primary-foreground shadow-xs transition-all hover:bg-primary/90 active:scale-95 disabled:pointer-events-none disabled:opacity-40"
+          className="size-7 shrink-0 rounded-xl bg-primary text-primary-foreground shadow-xs transition-all hover:bg-primary/90 active:scale-95 disabled:pointer-events-none disabled:opacity-40"
         >
           <ArrowUpIcon className="size-4 stroke-[2.5]" />
         </Button>

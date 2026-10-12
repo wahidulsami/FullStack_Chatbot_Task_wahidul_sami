@@ -45,7 +45,7 @@ export default function EnquiryTable({
     return (
       <div className="space-y-3 p-4 sm:p-6">
         {[0, 1, 2, 3].map((row) => (
-          <Skeleton key={row} className="h-16 w-full rounded-2xl" />
+          <Skeleton key={row} className="h-16 w-full rounded-xl" />
         ))}
       </div>
     )
@@ -55,7 +55,7 @@ export default function EnquiryTable({
     return (
       <div className="p-8 text-center bg-destructive/5">
         <p className="text-sm font-medium text-destructive">{error}</p>
-        <Button variant="outline" className="mt-4 rounded-full" onClick={onRetry}>
+        <Button variant="outline" className="mt-4 rounded-xl" onClick={onRetry}>
           <RefreshCwIcon className="size-3.5 mr-1" />
           Retry
         </Button>
@@ -86,7 +86,7 @@ export default function EnquiryTable({
                 <button
                   type="button"
                   onClick={() => onSelect(enquiry)}
-                  className="text-left font-bold text-sm text-foreground hover:text-primary transition-colors block truncate"
+                  className="text-left font-bold text-sm text-foreground hover:text-primary transition-colors block truncate rounded-xl"
                 >
                   {enquiry.name}
                 </button>
@@ -95,7 +95,7 @@ export default function EnquiryTable({
                   <span className="truncate">{enquiry.email}</span>
                 </div>
               </div>
-              <span className="shrink-0 rounded-full bg-primary/15 text-primary border border-primary/25 px-2 py-0.5 text-[10px] font-bold">
+              <span className="shrink-0 rounded-xl bg-primary/15 text-primary border border-primary/25 px-2 py-0.5 text-[10px] font-bold">
                 {enquiry.userType}
               </span>
             </div>
@@ -130,7 +130,7 @@ export default function EnquiryTable({
                   size="xs"
                   onClick={() => onSelect(enquiry)}
                   aria-label={`View enquiry from ${enquiry.name}`}
-                  className="rounded-full text-xs px-2.5 h-7 border-border/80"
+                  className="rounded-xl text-xs px-2.5 h-7 border-border/80"
                 >
                   <EyeIcon className="size-3 mr-1" />
                   View
@@ -140,7 +140,7 @@ export default function EnquiryTable({
                   size="xs"
                   onClick={() => onDelete(enquiry)}
                   aria-label={`Delete enquiry from ${enquiry.name}`}
-                  className="rounded-full text-xs px-2 h-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                  className="rounded-xl text-xs px-2 h-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                 >
                   <Trash2Icon className="size-3" />
                 </Button>
@@ -185,7 +185,7 @@ export default function EnquiryTable({
                   <button
                     type="button"
                     onClick={() => onSelect(enquiry)}
-                    className="text-left font-semibold text-foreground hover:text-primary transition-colors block max-w-[200px] truncate"
+                    className="text-left font-semibold text-foreground hover:text-primary transition-colors block max-w-[200px] truncate rounded-xl"
                   >
                     {enquiry.name}
                   </button>
@@ -193,7 +193,7 @@ export default function EnquiryTable({
                 </TableCell>
                 <TableCell className="text-xs text-muted-foreground font-mono">{enquiry.phone}</TableCell>
                 <TableCell className="text-xs text-foreground font-medium">
-                  <span className="rounded-full bg-muted px-2.5 py-0.5 border border-border/50">
+                  <span className="rounded-xl bg-muted px-2.5 py-0.5 border border-border/50">
                     {enquiry.userType}
                   </span>
                 </TableCell>
@@ -217,7 +217,7 @@ export default function EnquiryTable({
                       size="xs"
                       onClick={() => onSelect(enquiry)}
                       aria-label={`View enquiry from ${enquiry.name}`}
-                      className="rounded-full text-xs px-2.5 h-7 border-border/80 hover:border-primary/50"
+                      className="rounded-xl text-xs px-2.5 h-7 border-border/80 hover:border-primary/50"
                     >
                       <EyeIcon className="size-3 mr-1" />
                       View
@@ -227,7 +227,7 @@ export default function EnquiryTable({
                       size="xs"
                       onClick={() => onDelete(enquiry)}
                       aria-label={`Delete enquiry from ${enquiry.name}`}
-                      className="rounded-full text-xs px-2.5 h-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                      className="rounded-xl text-xs px-2.5 h-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                     >
                       <Trash2Icon className="size-3" />
                     </Button>

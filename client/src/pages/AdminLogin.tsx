@@ -57,7 +57,7 @@ export default function AdminLogin() {
           render={<Link to="/" />}
           variant="outline"
           size="sm"
-          className="rounded-full border-border/80 bg-card/80 backdrop-blur-md px-4 text-xs font-medium text-foreground hover:bg-muted shadow-2xs"
+          className="rounded-xl border-border/80 bg-card/80 backdrop-blur-md px-4 text-xs font-medium text-foreground hover:bg-muted shadow-2xs"
         >
           <ArrowLeftIcon className="mr-1.5 size-3.5" />
           Back to site
@@ -69,16 +69,16 @@ export default function AdminLogin() {
       </div>
 
       {/* Double-Bezel Concentric Card Architecture */}
-      <div className="w-full max-w-md rounded-[2.4rem] p-2 bg-muted/40 border border-border shadow-2xl ring-1 ring-border/20 backdrop-blur-xl animate-bubble-in">
-        <div className="rounded-[calc(2.4rem-0.5rem)] bg-card border border-border/40 p-8 sm:p-10 shadow-xs space-y-6">
+      <div className="w-full max-w-md rounded-xl p-2 bg-muted/40 border border-border shadow-2xl ring-1 ring-border/20 backdrop-blur-xl animate-bubble-in">
+        <div className="rounded-[calc(1.225rem-0.5rem)] bg-card border border-border/40 p-8 sm:p-10 shadow-xs space-y-6">
           {/* Header & Brand Icon */}
           <div className="space-y-3 text-center">
-            <div className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-primary/20 text-primary shadow-xs">
+            <div className="mx-auto flex size-12 items-center justify-center rounded-xl bg-primary/20 text-primary shadow-xs">
               <ShieldCheckIcon className="size-6 stroke-[2.2]" />
             </div>
 
             <div className="space-y-1">
-              <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] font-bold text-primary uppercase tracking-wider">
+              <div className="inline-flex items-center gap-1.5 rounded-xl bg-primary/10 px-2.5 py-0.5 text-[10px] font-bold text-primary uppercase tracking-wider">
                 Admin Control Portal
               </div>
               <h1 className="font-heading text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
@@ -134,7 +134,7 @@ export default function AdminLogin() {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="group w-full rounded-full bg-primary text-primary-foreground font-semibold hover:bg-primary/90 h-11 text-sm shadow-sm transition-all duration-300 active:scale-[0.98] inline-flex items-center justify-center gap-2"
+              className="group w-full rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 h-11 text-sm shadow-sm transition-all duration-300 active:scale-[0.98] inline-flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
                 <>
@@ -144,7 +144,7 @@ export default function AdminLogin() {
               ) : (
                 <>
                   <span>Sign in to Dashboard</span>
-                  <span className="flex size-6 items-center justify-center rounded-full bg-primary-foreground/10 transition-transform duration-300 group-hover:translate-x-1">
+                  <span className="flex size-6 items-center justify-center rounded-xl bg-primary-foreground/10 transition-transform duration-300 group-hover:translate-x-1">
                     <ArrowRightIcon className="size-3 stroke-[2.5]" />
                   </span>
                 </>

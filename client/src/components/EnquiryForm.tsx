@@ -98,9 +98,9 @@ export default function EnquiryForm({
 
   if (sent) {
     return (
-      <div className={cn(!compact && "rounded-[2.4rem] p-2 bg-muted/40 border border-border shadow-xl")}>
-        <div className={cn("flex flex-col items-center gap-3 py-10 text-center", !compact && "rounded-[calc(2.4rem-0.5rem)] bg-card border border-border/40 p-8 shadow-xs")}>
-          <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/20 text-primary">
+      <div className={cn(!compact && "rounded-xl p-2 bg-muted/40 border border-border shadow-xl")}>
+        <div className={cn("flex flex-col items-center gap-3 py-10 text-center", !compact && "rounded-[calc(1.225rem-0.5rem)] bg-card border border-border/40 p-8 shadow-xs")}>
+          <div className="flex size-14 items-center justify-center rounded-xl bg-primary/20 text-primary">
             <CheckCircle2Icon className="size-8" />
           </div>
           <h3 className="font-heading text-xl font-bold text-foreground">Thank you for your enquiry!</h3>
@@ -268,7 +268,7 @@ export default function EnquiryForm({
             ) : (
               <>
                 <span>Send Enquiry Message</span>
-                <span className="flex size-6 items-center justify-center rounded-lg bg-primary-foreground/10 transition-transform duration-300 group-hover:translate-x-1">
+                <span className="flex size-6 items-center justify-center rounded-xl bg-primary-foreground/10 transition-transform duration-300 group-hover:translate-x-1">
                   <ArrowRightIcon className="size-3 stroke-[2.5]" />
                 </span>
               </>
@@ -284,8 +284,8 @@ export default function EnquiryForm({
   }
 
   return (
-    <div className="rounded-[2.4rem] p-2 bg-muted/40 border border-border shadow-xl ring-1 ring-border/20 backdrop-blur-md">
-      <div className="rounded-[calc(2.4rem-0.5rem)] bg-card border border-border/40 p-6 sm:p-8 shadow-xs">
+    <div className="rounded-xl p-2 bg-muted/40 border border-border shadow-xl ring-1 ring-border/20 backdrop-blur-md">
+      <div className="rounded-[calc(1.225rem-0.5rem)] bg-card border border-border/40 p-6 sm:p-8 shadow-xs">
         {formBody}
       </div>
     </div>

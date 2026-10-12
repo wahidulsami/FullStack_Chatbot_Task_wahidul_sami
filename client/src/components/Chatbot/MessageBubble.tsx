@@ -13,8 +13,8 @@ type Props = {
   onFormSuccess: (id: string) => void
 }
 
-const botAvatarClass = "size-7 rounded-full bg-primary/15 text-primary"
-const userAvatarClass = "size-7 rounded-full bg-muted text-muted-foreground"
+const botAvatarClass = "size-7 rounded-xl bg-primary/15 text-primary"
+const userAvatarClass = "size-7 rounded-xl bg-muted text-muted-foreground"
 const enter = "animate-bubble-in motion-reduce:animate-none"
 
 export default function MessageBubble({ message, onFormSuccess }: Props) {
@@ -25,7 +25,7 @@ export default function MessageBubble({ message, onFormSuccess }: Props) {
           <BotIcon className="size-4" />
         </MessageAvatar>
         <MessageContent className="max-w-[480px]">
-          <Bubble variant="outline" className="w-full rounded-2xl border-border bg-card shadow-xs">
+          <Bubble variant="outline" className="w-full rounded-xl border-border bg-card shadow-xs">
             <BubbleContent className="w-full bg-transparent p-0">
               <EnquiryForm
                 compact
@@ -60,7 +60,7 @@ export default function MessageBubble({ message, onFormSuccess }: Props) {
       <MessageContent className={isUser ? "items-end" : "items-start"}>
         <Bubble
           variant={isUser ? "default" : "muted"}
-          className={`max-w-[85%] rounded-2xl ${
+          className={`max-w-[85%] rounded-xl ${
             isUser
               ? "rounded-br-xs bg-primary text-primary-foreground shadow-xs"
               : "rounded-bl-xs border border-border/50 bg-muted/70 text-foreground"
