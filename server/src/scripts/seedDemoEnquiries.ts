@@ -1,39 +1,34 @@
 import "dotenv/config"
 import mongoose from "mongoose"
 import connectDB from "../config/db"
-import { Enquiry } from "../models/Enquiry"
+import { Enquiry, type EnquiryStatus, type UserType } from "../models/Enquiry"
 
-const DEMO_FIXTURES = [
-  {
-    name: "[DEMO] Vikram Sharma",
-    email: "demo.vikram@example.com",
-    phone: "+91 9876543210",
-    userType: "Customer" as const,
-    interest: "[DEMO] Drone Expo 2025 Media Coverage",
-    message:
-      "[DEMO TEST FIXTURE - NOT A REAL INQUIRY] Inquiring about exhibition stall video coverage and leadership interview packages for Drone Expo Mumbai.",
-    status: "New" as const,
-  },
-  {
-    name: "[DEMO] Ananya Patel",
-    email: "demo.ananya@example.com",
-    phone: "+91 9876543211",
-    userType: "Student" as const,
-    interest: "[DEMO] DGCA RPTO Pilot Training Partner",
-    message:
-      "[DEMO TEST FIXTURE - NOT A REAL INQUIRY] Seeking verified syllabus and batch schedule details for affiliated DGCA Remote Pilot certification.",
-    status: "Contacted" as const,
-  },
-  {
-    name: "[DEMO] Rajesh Verma",
-    email: "demo.rajesh@example.com",
-    phone: "+91 9876543212",
-    userType: "Other" as const,
-    interest: "[DEMO] Drone Doctor Technical Consultation",
-    message:
-      "[DEMO TEST FIXTURE - NOT A REAL INQUIRY] Requesting diagnostic guidance regarding agricultural spraying drone firmware calibration.",
-    status: "In Progress" as const,
-  },
+const SAMPLE_NAMES = [
+  "Vikram Sharma", "Ananya Patel", "Rajesh Verma", "Priya Nair", "Rohan Gupta",
+  "Sneha Reddy", "Amit Joshi", "Kavita Sundaram", "Tariq Khan", "Deepa Menon",
+  "Arjun Kapoor", "Meera Rao", "Karthik Swamy", "Sunita Deshmukh", "Alok Mishra",
+  "Pooja Choudhury", "Nikhil Bhat", "Divya Iyer", "Sanjay Hegde", "Vandana Rao",
+  "Rohit Nambiar", "Neha Kulkarni", "Suresh Pillai", "Swati Sen", "Harish Varma",
+  "Tanvi Agarwal", "Gaurav Saxena", "Pallavi Das", "Nitin Kaul", "Shilpa Chawla",
+  "Manish Tiwari", "Shreya Bose", "Rahul Trivedi", "Payal Mukherjee", "Abhinav Pandey",
+  "Aarti Seth", "Vivek Menon", "Bhavna Jain", "Sameer Chauhan", "Ritu Singhania",
+  "Kunal Chopra", "Jyoti Bhattacharya", "Siddharth Malhotra", "Geeta Goswami", "Varun Aggarwal",
+  "Anita Roy", "Deepak Bansal", "Roshni Roy", "Akash Ganguly", "Kiran Mazumdar",
+  "Naveen Jindal", "Aparna Sen", "Mohit Suri", "Devika Rani", "Pranav Mohan"
+]
+
+const USER_TYPES: UserType[] = ["Customer", "Student", "Other"]
+const STATUSES: EnquiryStatus[] = ["New", "Contacted", "In Progress", "Closed"]
+
+const INTERESTS = [
+  "Drone Expo 2025 Media Coverage",
+  "DGCA RPTO Pilot Training Partner",
+  "Drone Doctor Technical Consultation",
+  "Precision Agriculture Thermal Survey",
+  "Infrastructure Inspection GIS Mapping",
+  "Disaster Management Surveillance",
+  "Drone Repair & Battery Diagnostic",
+  "Ecosystem Partnership Program"
 ]
 
 async function seedDemoEnquiries(): Promise<void> {
@@ -47,22 +42,43 @@ async function seedDemoEnquiries(): Promise<void> {
     console.log("[seedDemoEnquiries] All prior test records removed successfully.")
   }
 
-  // Insert verified demo fixtures clearly marked with [DEMO] tag
-  console.log("[seedDemoEnquiries] Seeding clearly labeled demo fixtures...")
-  for (const fixture of DEMO_FIXTURES) {
-    const existing = await Enquiry.findOne({ email: fixture.email })
-    if (existing) {
-      await Enquiry.updateOne({ email: fixture.email }, { $set: fixture })
-      console.log(`[seedDemoEnquiries] Updated demo fixture for ${fixture.email}`)
-    } else {
-      await Enquiry.create(fixture)
-      console.log(`[seedDemoEnquiries] Created demo fixture for ${fixture.email}`)
-    }
+  console.log("[seedDemoEnquiries] Seeding 55 clearly labeled demo fixtures...")
+
+  const now = Date.now()
+  const dayMs = 24 * 60 * 60 * 1000
+
+  for (let i = 0; i < SAMPLE_NAMES.length; i++) {
+    const name = SAMPLE_NAMES[i]
+    const email = `demo.${name.toLowerCase().replace(/\s+/g, ".")}@example.com`
+    const phone = `+91 ${9800000000 + i * 3731}`.slice(0, 15)
+    const userType = USER_TYPES[i % USER_TYPES.length]
+    const status = STATUSES[i % STATUSES.length]
+    const interest = INTERESTS[i % INTERESTS.length]
+    const message = `[DEMO TEST FIXTURE ${i + 1}] Inquiry regarding ${interest}. Seeking technical consultation and scheduling details.`
+
+    // Stagger dates over the past 45 days
+    const createdAt = new Date(now - (SAMPLE_NAMES.length - i) * (dayMs * 0.8))
+
+    await Enquiry.findOneAndUpdate(
+      { email },
+      {
+        name: `[DEMO] ${name}`,
+        email,
+        phone,
+        userType,
+        interest: `[DEMO] ${interest}`,
+        message,
+        status,
+        createdAt,
+        updatedAt: createdAt,
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    )
   }
 
   const count = await Enquiry.countDocuments()
   console.log(`[seedDemoEnquiries] Total enquiries in database: ${count}`)
-  console.log("[seedDemoEnquiries] Demo fixtures are strictly tagged with [DEMO] and isolated from real enquiries.")
+  console.log("[seedDemoEnquiries] Demo fixtures seeded successfully.")
 }
 
 seedDemoEnquiries()

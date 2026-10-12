@@ -1,4 +1,14 @@
-import { CalendarIcon, EyeIcon, MailIcon, PhoneIcon, RefreshCwIcon, Trash2Icon } from "lucide-react"
+import {
+  ArrowDownIcon,
+  ArrowUpDownIcon,
+  ArrowUpIcon,
+  CalendarIcon,
+  EyeIcon,
+  MailIcon,
+  PhoneIcon,
+  RefreshCwIcon,
+  Trash2Icon,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import {
@@ -10,17 +20,24 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import StatusDropdown from "@/components/admin/StatusDropdown"
-import type { Enquiry, EnquiryStatus } from "@/types/enquiry"
+import Pagination from "@/components/admin/Pagination"
+import type { Enquiry, EnquiryStatus, PaginationMeta } from "@/types/enquiry"
 
 interface EnquiryTableProps {
   enquiries: Enquiry[]
   loading: boolean
   error: string | null
   pendingStatusId: string | null
+  pagination?: PaginationMeta
+  sortBy?: "createdAt" | "name" | "status" | "userType"
+  sortOrder?: "asc" | "desc"
   onSelect: (enquiry: Enquiry) => void
   onStatusChange: (id: string, status: EnquiryStatus) => void
   onDelete: (enquiry: Enquiry) => void
   onRetry: () => void
+  onPageChange?: (page: number) => void
+  onLimitChange?: (limit: number) => void
+  onSortChange?: (field: "createdAt" | "name" | "status" | "userType") => void
 }
 
 function formatDate(value: string): string {
@@ -36,10 +53,16 @@ export default function EnquiryTable({
   loading,
   error,
   pendingStatusId,
+  pagination,
+  sortBy = "createdAt",
+  sortOrder = "desc",
   onSelect,
   onStatusChange,
   onDelete,
   onRetry,
+  onPageChange,
+  onLimitChange,
+  onSortChange,
 }: EnquiryTableProps) {
   if (loading) {
     return (
@@ -63,13 +86,34 @@ export default function EnquiryTable({
     )
   }
 
+  const renderSortIndicator = (field: "createdAt" | "name" | "status" | "userType") => {
+    if (sortBy !== field) {
+      return <ArrowUpDownIcon className="size-3 opacity-40 ml-1 inline" />
+    }
+    return sortOrder === "asc" ? (
+      <ArrowUpIcon className="size-3 text-primary ml-1 inline" />
+    ) : (
+      <ArrowDownIcon className="size-3 text-primary ml-1 inline" />
+    )
+  }
+
   if (enquiries.length === 0) {
     return (
-      <div className="p-12 text-center space-y-1">
+      <div className="p-12 text-center space-y-2">
         <p className="text-sm font-bold text-foreground">No enquiries found</p>
         <p className="text-xs text-muted-foreground">
-          New contact form and chatbot enquiries will appear here automatically.
+          No matching records for your current search, filter, or page.
         </p>
+        {pagination && pagination.page > 1 && onPageChange && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="rounded-xl mt-2 text-xs"
+            onClick={() => onPageChange(1)}
+          >
+            Return to First Page
+          </Button>
+        )}
       </div>
     )
   }
@@ -156,22 +200,54 @@ export default function EnquiryTable({
           <TableHeader className="bg-muted/30">
             <TableRow className="border-border/60">
               <TableHead className="text-xs font-bold uppercase tracking-wider text-muted-foreground py-3.5">
-                Contact
+                <button
+                  type="button"
+                  onClick={() => onSortChange?.("name")}
+                  className="inline-flex items-center hover:text-foreground transition-colors cursor-pointer"
+                  title="Sort by Contact Name"
+                >
+                  <span>Contact</span>
+                  {renderSortIndicator("name")}
+                </button>
               </TableHead>
               <TableHead className="text-xs font-bold uppercase tracking-wider text-muted-foreground py-3.5">
                 Phone
               </TableHead>
               <TableHead className="text-xs font-bold uppercase tracking-wider text-muted-foreground py-3.5">
-                Type
+                <button
+                  type="button"
+                  onClick={() => onSortChange?.("userType")}
+                  className="inline-flex items-center hover:text-foreground transition-colors cursor-pointer"
+                  title="Sort by User Type"
+                >
+                  <span>Type</span>
+                  {renderSortIndicator("userType")}
+                </button>
               </TableHead>
               <TableHead className="text-xs font-bold uppercase tracking-wider text-muted-foreground py-3.5">
                 Interest
               </TableHead>
               <TableHead className="text-xs font-bold uppercase tracking-wider text-muted-foreground py-3.5">
-                Status
+                <button
+                  type="button"
+                  onClick={() => onSortChange?.("status")}
+                  className="inline-flex items-center hover:text-foreground transition-colors cursor-pointer"
+                  title="Sort by Status"
+                >
+                  <span>Status</span>
+                  {renderSortIndicator("status")}
+                </button>
               </TableHead>
               <TableHead className="text-xs font-bold uppercase tracking-wider text-muted-foreground py-3.5">
-                Received
+                <button
+                  type="button"
+                  onClick={() => onSortChange?.("createdAt")}
+                  className="inline-flex items-center hover:text-foreground transition-colors cursor-pointer"
+                  title="Sort by Received Date"
+                >
+                  <span>Received</span>
+                  {renderSortIndicator("createdAt")}
+                </button>
               </TableHead>
               <TableHead className="text-right text-xs font-bold uppercase tracking-wider text-muted-foreground py-3.5">
                 Actions
@@ -238,6 +314,16 @@ export default function EnquiryTable({
           </TableBody>
         </Table>
       </div>
+
+      {/* ─── Responsive Pagination Bar ──────────────────────────────── */}
+      {pagination && onPageChange && onLimitChange && (
+        <Pagination
+          pagination={pagination}
+          onPageChange={onPageChange}
+          onLimitChange={onLimitChange}
+          disabled={loading}
+        />
+      )}
     </>
   )
 }

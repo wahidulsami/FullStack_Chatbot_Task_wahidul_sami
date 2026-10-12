@@ -69,6 +69,9 @@ const enquirySchema = new Schema<IEnquiry>(
 
 // Compound and sorting indexes for fast search and filtering
 enquirySchema.index({ status: 1, userType: 1 });
+enquirySchema.index({ status: 1, createdAt: -1 });
+enquirySchema.index({ userType: 1, createdAt: -1 });
+enquirySchema.index({ name: 1, createdAt: -1 });
 enquirySchema.index({ createdAt: -1 });
 
 export const Enquiry = model<IEnquiry>("Enquiry", enquirySchema);

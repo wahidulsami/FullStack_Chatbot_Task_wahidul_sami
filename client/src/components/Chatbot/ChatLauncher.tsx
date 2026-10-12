@@ -1,10 +1,14 @@
 import { useEffect, useRef, useState } from "react"
+import { useLocation } from "react-router-dom"
 import { BotIcon, MessageCircleIcon, SparklesIcon, XIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import ChatWindow from "./ChatWindow"
 import { playChatChime, resumeAudioContext } from "./chatSound"
 
 export default function ChatLauncher() {
+  const location = useLocation()
+  const isAdminPage = location.pathname.startsWith("/admin")
+
   const [open, setOpen] = useState(false)
   const [isExpanded, setIsExpanded] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
@@ -14,16 +18,18 @@ export default function ChatLauncher() {
 
   // Track viewport size for mobile full-screen sheet vs desktop modes
   useEffect(() => {
+    if (isAdminPage) return
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 640)
     }
     checkMobile()
     window.addEventListener("resize", checkMobile)
     return () => window.removeEventListener("resize", checkMobile)
-  }, [])
+  }, [isAdminPage])
 
   // Landing page behavior: on mount, chat stays closed; after 1.2s greeting bubble appears and chime plays
   useEffect(() => {
+    if (isAdminPage) return
     const unlockAudio = () => {
       resumeAudioContext()
       if (!hasPlayedSoundRef.current) {
@@ -50,7 +56,7 @@ export default function ChatLauncher() {
       window.removeEventListener("pointerdown", unlockAudio)
       window.removeEventListener("keydown", unlockAudio)
     }
-  }, [])
+  }, [isAdminPage])
 
   // Lock body scroll when in expanded dialog or mobile full-screen mode
   useEffect(() => {
@@ -92,6 +98,10 @@ export default function ChatLauncher() {
     window.addEventListener("keydown", onKeyDown)
     return () => window.removeEventListener("keydown", onKeyDown)
   }, [open])
+
+  if (isAdminPage) {
+    return null
+  }
 
   // Hide launcher while chat is open in expanded or mobile mode.
   // In compact mode on desktop, launcher is visible and turns into X (the single close control).

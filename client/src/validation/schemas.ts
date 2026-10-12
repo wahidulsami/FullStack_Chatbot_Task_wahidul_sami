@@ -52,3 +52,17 @@ export const loginSchema = z.object({
 export type LoginFormValues = z.infer<typeof loginSchema>
 
 export const statusSchema = z.enum(ENQUIRY_STATUSES)
+
+export const enquiryListQuerySchema = z.object({
+  status: z.enum(ENQUIRY_STATUSES).optional(),
+  userType: z.enum(USER_TYPES).optional(),
+  page: z.coerce.number().int().min(1).default(1).optional(),
+  limit: z.coerce.number().int().min(1).max(100).default(20).optional(),
+  search: z.string().trim().max(100).optional(),
+  sortBy: z.enum(["createdAt", "name", "status", "userType"]).default("createdAt").optional(),
+  sortOrder: z.enum(["asc", "desc"]).default("desc").optional(),
+  cursor: z.string().optional(),
+  strategy: z.enum(["offset", "cursor"]).default("offset").optional(),
+})
+
+export type EnquiryListQuery = z.infer<typeof enquiryListQuerySchema>
