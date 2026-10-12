@@ -91,6 +91,7 @@ export default function ChatLauncher() {
   useEffect(() => {
     if (!open) return
     const onKeyDown = (e: KeyboardEvent) => {
+      if (e.defaultPrevented) return
       if (e.key === "Escape") {
         handleCloseChat()
       }
