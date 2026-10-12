@@ -67,7 +67,7 @@ const enquirySchema = new Schema<IEnquiry>(
   { timestamps: true } 
 );
 
-// Search ও filter দ্রুত করার জন্য
+// Compound and sorting indexes for fast search and filtering
 enquirySchema.index({ status: 1, userType: 1 });
 enquirySchema.index({ createdAt: -1 });
 

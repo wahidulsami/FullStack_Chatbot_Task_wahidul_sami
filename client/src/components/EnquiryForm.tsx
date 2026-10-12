@@ -181,7 +181,7 @@ export default function EnquiryForm({
             <Input
               id={fieldId("phone")}
               type="tel"
-              placeholder="+880 1712 345678"
+              placeholder="+91 98765 43210"
               aria-invalid={!!errors.phone}
               className="h-10 rounded-xl border-border bg-background px-3 text-xs sm:text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
               {...register("phone")}
@@ -216,11 +216,11 @@ export default function EnquiryForm({
 
           <Field className="sm:col-span-2 space-y-1" data-invalid={!!errors.interest}>
             <FieldLabel htmlFor={fieldId("interest")} className="text-xs font-semibold text-foreground">
-              Program or Service of Interest
+              Topic or Service of Interest
             </FieldLabel>
             <Input
               id={fieldId("interest")}
-              placeholder="e.g. DGCA Remote Pilot License or GIS Photogrammetry"
+              placeholder="e.g. Drone Expo Media, Drone Doctor Support, RPTO Pilot Training, or GIS Mapping"
               aria-invalid={!!errors.interest}
               className="h-10 rounded-xl border-border bg-background px-3 text-xs sm:text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
               {...register("interest")}

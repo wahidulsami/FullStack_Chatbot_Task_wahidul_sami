@@ -12,21 +12,21 @@ import { Button } from "@/components/ui/button"
 
 const contactItems = [
   {
-    label: "Official Email",
-    value: "hello@chatbotacademy.com",
-    hint: "Replies within one business day",
+    label: "Official Inquiries & Partnerships",
+    value: "bd@dronetv.in",
+    hint: "Business development & media coverage",
     icon: MailIcon,
   },
   {
-    label: "Direct Phone & WhatsApp",
-    value: "+880 1712 345678",
-    hint: "Admissions & emergency flight support",
+    label: "Drone Doctor & Support Helpline",
+    value: "+91 8882210038 / +91 9354688923",
+    hint: "Technical support & general enquiries",
     icon: PhoneIcon,
   },
   {
-    label: "Academy Headquarters",
-    value: "Dhaka, Bangladesh & Hyderabad, India",
-    hint: "Flight simulator & training center",
+    label: "DroneTV Headquarters",
+    value: "5A/6B White Waters, Timber Lake Colony, Shaikpet",
+    hint: "Hyderabad, Telangana, India",
     icon: MapPinIcon,
   },
 ]
@@ -44,14 +44,13 @@ export default function Contact() {
         <div className="rounded-[calc(1.225rem-0.375rem)] bg-card p-8 sm:p-10 border border-border/40 text-center space-y-3">
           <div className="inline-flex items-center gap-1.5 rounded-xl bg-primary/10 px-3.5 py-1 text-xs font-semibold text-primary">
             <MessageSquareIcon className="size-3.5" />
-            Direct Communication Hub
+            Official Contact Hub
           </div>
           <h1 className="font-heading text-3xl sm:text-5xl font-black tracking-tight text-foreground">
-            Contact Flight Academy
+            Connect with DroneTV
           </h1>
           <p className="text-muted-foreground text-sm sm:text-base leading-relaxed max-w-2xl mx-auto">
-            Have questions regarding pilot licenses, enterprise surveys, or course fees?
-            Submit an enquiry or message our team.
+            Have questions regarding Drone Expo coverage, Drone Doctor technical support, marketplace listings, or partner training? Reach out to our Hyderabad office or submit an enquiry.
           </p>
         </div>
       </div>
@@ -95,10 +94,10 @@ export default function Contact() {
                   Operating Hours
                 </div>
                 <div className="text-sm font-semibold text-foreground mt-0.5">
-                  Saturday - Thursday, 9:00 AM - 6:00 PM
+                  Monday - Saturday, 9:30 AM - 6:30 PM IST
                 </div>
                 <div className="text-[11px] text-muted-foreground mt-0.5">
-                  Admissions desk & flight simulator laboratory
+                  Media operations, directory reviews & technical desk
                 </div>
               </div>
             </div>
@@ -112,7 +111,7 @@ export default function Contact() {
                 <span>Prefer Instant Answers?</span>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Our 24/7 rule-based chatbot answers course fees, schedule questions, and admission steps instantly.
+                Our 24/7 rule-based assistant answers common questions about DroneTV, Drone Expo events, Drone Doctor support, and ecosystem partnerships instantly.
               </p>
               <Button
                 onClick={triggerChat}

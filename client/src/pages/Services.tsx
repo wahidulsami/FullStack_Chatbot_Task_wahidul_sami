@@ -1,58 +1,58 @@
 import { Link } from "react-router-dom"
 import {
   ArrowRightIcon,
-  CameraIcon,
   CheckCircle2Icon,
   CompassIcon,
-  FactoryIcon,
-  LeafIcon,
+  MegaphoneIcon,
   SparklesIcon,
+  VideoIcon,
+  WrenchIcon,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 const services = [
   {
+    icon: VideoIcon,
+    title: "Digital Media & Video Broadcast",
+    description:
+      "Comprehensive video coverage, product unveilings, and thought-leader interviews across major drone expos and technology symposiums.",
+    benefits: [
+      "Official media partner for Drone Expo 2025 (Hyderabad & Mumbai)",
+      "High-impact interviews with leading UAV founders and exhibitors",
+      "Broadcasted to the drone community via YouTube @indiadronetv",
+    ],
+  },
+  {
     icon: CompassIcon,
-    title: "Topographical Survey & GIS Mapping",
+    title: "Drone, GIS & AI Marketplace",
     description:
-      "Sub-centimeter accuracy orthomosaics, digital surface models (DSM), and volumetric cut/fill computations for construction and civil engineering.",
+      "India's dedicated industry aggregator connecting drone manufacturers, commercial pilots, GIS software developers, and buyers.",
     benefits: [
-      "RTK-calibrated GPS coordinates",
-      "CAD & GIS compatible outputs (GeoTIFF, DXF)",
-      "Boundary and contour line elevation mapping",
+      "Showcases products and technologies in Drones, GIS, and AI",
+      "Company profiles and direct business enquiry gateways",
+      "Collaboration network with government and enterprise partners",
     ],
   },
   {
-    icon: FactoryIcon,
-    title: "Industrial & Solar Plant Inspection",
+    icon: WrenchIcon,
+    title: "Drone Doctor Help Line",
     description:
-      "Thermal infrared audits to detect defective solar cells, pipeline cracks, transmission line hotspots, and wind turbine damage without system downtime.",
+      "Dedicated technical support, troubleshooting, and maintenance consultation for commercial drone operators and engineering teams.",
     benefits: [
-      "Radiometric thermal imagery reports",
-      "Automated hotspot and anomaly tagging",
-      "Zero personnel risk on hazardous sites",
+      "Firmware diagnostics and sensor calibration advice",
+      "Technical guidance for common drone hardware issues",
+      "DGCA regulatory compliance and safety recommendations",
     ],
   },
   {
-    icon: LeafIcon,
-    title: "Precision Agriculture & Crop Spraying",
+    icon: MegaphoneIcon,
+    title: "Advertising & Brand Sponsorship",
     description:
-      "Multispectral NDVI analysis for soil moisture, pest infestation, and nitrogen balance, paired with automated agricultural spraying drones.",
+      "Targeted advertising solutions and sponsor packages designed for drone manufacturers, component suppliers, and software developers.",
     benefits: [
-      "90% water saving compared to manual methods",
-      "Targeted fertilizer/pesticide distribution",
-      "Early disease diagnosis maps",
-    ],
-  },
-  {
-    icon: CameraIcon,
-    title: "Cinematic Aerial Media & Event Coverage",
-    description:
-      "4K/6K HDR aerial cinematography, corporate promos, live event broadcasting, and real-estate showcase video production.",
-    benefits: [
-      "Licensed and insured flight crews",
-      "Dynamic FPV and stabilized heavy-lift drones",
-      "Professional post-production and editing",
+      "Featured video showcases and expo stall walk-throughs",
+      "Strategic placements across DroneTV media and newsletter channels",
+      "Connect directly with industry decision-makers and enterprise clients",
     ],
   },
 ]
@@ -70,14 +70,13 @@ export default function Services() {
         <div className="rounded-[calc(1.225rem-0.375rem)] bg-card p-8 sm:p-10 border border-border/40 text-center space-y-3">
           <div className="inline-flex items-center gap-1.5 rounded-xl bg-primary/10 px-3.5 py-1 text-xs font-semibold text-primary">
             <SparklesIcon className="size-3.5" />
-            Enterprise Aerial Solutions
+            Ecosystem Solutions
           </div>
           <h1 className="font-heading text-3xl sm:text-5xl font-black tracking-tight text-foreground">
-            Commercial Drone Services
+            DroneTV Platform Services
           </h1>
           <p className="text-muted-foreground text-sm sm:text-base leading-relaxed max-w-2xl mx-auto">
-            From high-precision surveying to industrial thermal audits, our certified drone fleet
-            delivers fast, actionable insights for your business operations.
+            From premier media coverage and expo spotlights to our Drone Doctor helpline and marketplace directory, DroneTV powers the UAV ecosystem.
           </p>
         </div>
       </div>
@@ -118,7 +117,7 @@ export default function Services() {
                   onClick={triggerChat}
                   className="group flex-1 rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 text-xs shadow-xs py-2.5 transition-all active:scale-[0.98]"
                 >
-                  <span>Request Quote via Chat</span>
+                  <span>Enquire via Assistant</span>
                   <ArrowRightIcon className="ml-1.5 size-3 transition-transform group-hover:translate-x-0.5" />
                 </Button>
                 <Button

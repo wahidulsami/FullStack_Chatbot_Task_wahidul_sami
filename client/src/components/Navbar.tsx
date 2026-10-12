@@ -45,7 +45,7 @@ export default function Navbar() {
           </span>
           <span className="flex items-center gap-1.5">
             <span>DroneTV</span>
-            <span className="text-muted-foreground font-medium hidden xs:inline">Academy</span>
+            <span className="text-muted-foreground font-medium hidden xs:inline">.in</span>
             <span className="size-1.5 rounded-xl bg-primary" />
           </span>
         </Link>

@@ -11,83 +11,79 @@ export type BotReply = {
 export const QUICK_QUESTIONS = [
   "What services does DroneTV provide?",
   "What courses / training are available?",
-  "What are the course fees and pricing?",
-  "What is the course duration and schedule?",
-  "How can I register / enroll?",
   "How can I contact DroneTV?",
+  "How can I register?",
+  "I am interested in a service.",
+  "I am a student.",
   "I want to speak with someone.",
 ]
 
 export const WELCOME_TEXT =
-  "Hi! I'm the DroneTV Assistant. How can I help you today? Ask about our courses, course fees, duration, services, or how to register."
+  "Welcome to the DroneTV Assistant! How can I help you today? Ask about our services, partner training, Drone Doctor technical support, or choose one of the quick questions below."
 
 type Rule = {
   keywords: string[]
   reply: BotReply
 }
 
-// ক্রম গুরুত্বপূর্ণ: আগে ফর্ম সংক্রান্ত বা নির্দিষ্ট নিয়ম, পরে সাধারণ নিয়ম, সবার শেষে greeting
 const RULES: Rule[] = [
   {
     keywords: [
+      "i want to speak with someone",
+      "speak with someone",
       "speak",
       "talk",
       "human",
       "someone",
       "agent",
       "call me",
-      "support",
-      "help",
-      "কথা বলতে চাই",
-      "মানুষ",
-      "প্রতিনিধি",
-      "সাহায্য",
+      "advisor",
+      "representative",
     ],
     reply: {
-      text: "Sure! Share your details in the form below and an advisor from our support team will get in touch with you shortly.",
+      text: "Certainly! Please share your contact details and enquiry in the form below. A DroneTV representative from our Hyderabad office will reach out to you directly.",
       showForm: true,
       defaultUserType: "Other",
     },
   },
   {
     keywords: [
+      "i am a student",
       "student",
       "career",
       "job",
       "internship",
       "placement",
-      "study",
-      "ছাত্র",
-      "শিক্ষার্থী",
-      "ক্যারিয়ার",
-      "চাকরি",
-      "ইন্টার্নশিপ",
+      "pilot career",
+      "hiring",
+      "fresher",
     ],
     reply: {
-      text: "Great! Students use DroneTV to discover hands-on drone pilot training, GIS portfolio building, and career placement support with leading drone tech startups. Share your details below and our counselor will guide you.",
+      text: "Welcome! DroneTV connects students and aspiring pilots with accredited RPTO training partners, GIS geospatial workflows, and career openings across leading drone tech companies. Share your details below and our team will connect you with verified learning tracks and opportunities.",
       showForm: true,
       defaultUserType: "Student",
     },
   },
   {
     keywords: [
+      "i am interested in a service",
       "interested in a service",
       "interested",
       "hire",
       "quote",
-      "client",
-      "কাজের জন্য",
-      "ভাড়া",
-      "হায়ার",
+      "pricing quote",
+      "client enquiry",
+      "commercial inquiry",
     ],
     reply: {
-      text: "Wonderful, tell us what you need in the form below and we will connect you with our aerial operations and GIS team.",
+      text: "We would be delighted to assist you! Please share what service you are looking for in the form below (Media coverage, Marketplace listing, Drone Doctor support, or Advertising). Our operations team will get in touch shortly.",
       showForm: true,
       defaultUserType: "Customer",
     },
   },
   {
     keywords: [
+      "how can i register",
       "register",
       "registration",
       "enroll",
@@ -96,14 +92,71 @@ const RULES: Rule[] = [
       "join",
       "admission",
       "apply",
-      "ভর্তি",
-      "রেজিস্ট্রেশন",
-      "আবেদন",
-      "যুক্ত হব",
     ],
     reply: {
-      text: "To register for an upcoming batch, submit the enquiry form below. Our admissions coordinator will verify your information and share the confirmation details.",
+      text: "To register your interest for partner training programs, media spotlight coverage, or directory listings, please fill out the enquiry form below. Our team will verify your requirements and guide you through the next steps.",
       showForm: true,
+      defaultUserType: "Other",
+    },
+  },
+  {
+    keywords: [
+      "what courses / training are available",
+      "courses / training are available",
+      "course",
+      "courses",
+      "training",
+      "pilot license",
+      "dgca",
+      "rpto",
+      "certification",
+      "certified",
+      "education",
+      "pilot training",
+    ],
+    reply: {
+      text: "DroneTV collaborates with DGCA-authorized Remote Pilot Training Organizations (RPTOs), universities, and training partners such as India Drone Academy. Available learning tracks through partners include:\n\n1. DGCA Remote Pilot Certification (Small & Medium category)\n2. GIS Aerial Surveying & Photogrammetry\n3. Precision Agriculture Drone Operations\n4. Drone AI, Thermal Inspection, and Data Processing\n\nSpecific batch fees and timelines require partner confirmation. Submit an enquiry to connect with verified training institutes.",
+      showForm: true,
+      defaultUserType: "Student",
+    },
+  },
+  {
+    keywords: [
+      "what services does dronetv provide",
+      "services does dronetv provide",
+      "service",
+      "services",
+      "provide",
+      "offer",
+      "what do you do",
+      "capabilities",
+      "solutions",
+    ],
+    reply: {
+      text: "DroneTV delivers comprehensive solutions across the drone ecosystem:\n\n1. Digital Media & Video Broadcast: Expo coverage, product launches, and executive interviews.\n2. Ecosystem Marketplace & Directory: Discovery platform for drones, GIS tools, and AI software.\n3. Drone Doctor Consultations: Technical diagnostics, compliance, and maintenance guidance.\n4. Brand Advertising & Sponsorship: Targeted promotion for UAV businesses and enterprise tech.\n\nSubmit an enquiry below for custom media or business collaboration.",
+      showForm: true,
+      defaultUserType: "Customer",
+    },
+  },
+  {
+    keywords: [
+      "how can i contact dronetv",
+      "contact dronetv",
+      "contact",
+      "email",
+      "phone",
+      "call",
+      "address",
+      "reach",
+      "whatsapp",
+      "location",
+      "office",
+      "where are you",
+    ],
+    reply: {
+      text: "You can reach DroneTV through official verified channels:\n\nOffice: DroneTv 5A/6B, White Waters, Timber Lake Colony, Shaikpet, Hyderabad, Telangana, India\nEmail: bd@dronetv.in\nHelpline: +91 8882210038 / +91 9354688923\nSocial: YouTube (@indiadronetv), Instagram (@dronetv.in), Facebook (dronetv.in), X (@indiadronetv)\n\nYou can also submit an enquiry form directly in this chat!",
+      showForm: true,
+      defaultUserType: "Other",
     },
   },
   {
@@ -115,121 +168,121 @@ const RULES: Rule[] = [
       "pricing",
       "rate",
       "charge",
-      "খরচ",
-      "ফি",
-      "টাকা",
-      "মূল্য",
-      "কত টাকা",
-    ],
-    reply: {
-      text: "Our course fees are structured by specialization:\n\n• Remote Pilot Certification (Basic): $150 (৳15,000)\n• GIS Survey & Land Mapping: $280 (৳28,000)\n• Advanced AI & Photogrammetry: $450 (৳45,000)\n\n💡 We provide 10% student discounts and flexible 2-installment payment options. Inquire below to reserve your seat!",
-    },
-  },
-  {
-    keywords: [
       "duration",
-      "time",
-      "how long",
       "schedule",
-      "timing",
-      "length",
       "batch",
-      "period",
-      "সময়",
-      "কতদিন",
-      "মেয়াদ",
-      "শিডিউল",
-      "ক্লাস",
-      "সময়কাল",
+      "timing",
+      "dates",
+      "when start",
+      "how much",
     ],
     reply: {
-      text: "Course durations vary based on the learning track:\n\n• Weekend Intensive Track: 2 Weeks (Saturdays & Sundays)\n• Standard Pilot Certification: 4 Weeks (includes 16 flight hours)\n• Professional GIS & AI Master: 8 Weeks (hands-on project work)\n\nNew batches start on the 1st and 15th of every month. Both weekday and weekend schedules are available!",
+      text: "Course fees and batch schedules are determined directly by verified DGCA RPTO training partners and institutes. DroneTV does not publish fixed proprietary tuition rates. Please submit an enquiry below so our team can connect you with verified partner fee structures, upcoming batch dates, and syllabus details.",
+      showForm: true,
+      defaultUserType: "Student",
     },
   },
   {
     keywords: [
-      "certificate",
-      "certification",
-      "license",
-      "certified",
-      "credential",
-      "সার্টিফিকেট",
-      "সনদপত্র",
-      "লাইসেন্স",
-      "সনদ",
+      "doctor",
+      "drone doctor",
+      "troubleshoot",
+      "repair",
+      "maintenance",
+      "fix",
+      "issue",
+      "compliance",
+      "technical support",
     ],
     reply: {
-      text: "Yes! Upon successfully completing both simulator assessments and physical flying exams, you will receive a verified, industry-recognized Drone Pilot Certificate. This credential allows you to operate commercially in survey, mapping, and media industries.",
+      text: "The Drone Doctor Help Line is DroneTV's dedicated support service for drone pilots and operators. It provides guidance on technical troubleshooting, firmware issues, sensor calibration, hardware maintenance, and DGCA compliance. You can reach the helpline at +91 8882210038 / +91 9354688923 or submit an enquiry.",
+      showForm: true,
+      defaultUserType: "Customer",
     },
   },
   {
     keywords: [
-      "discount",
-      "offer",
-      "promo",
-      "concession",
-      "ছাড়",
-      "অফার",
-      "ডিসকাউন্ট",
+      "advertise",
+      "advertising",
+      "sponsor",
+      "sponsorship",
+      "promote",
+      "promotion",
+      "ad plan",
+      "commercial",
+      "tokens",
+      "slot",
     ],
     reply: {
-      text: "We currently have two active offers:\n\n1. 🎓 Student Discount: 10% off with valid college/university ID\n2. 👥 Group Enrollment: 15% off when enrolling with 3 or more peers\n\nAsk our team or fill in the enquiry form to claim your offer!",
+      text: "DroneTV offers tailored advertising and sponsorship plans for drone manufacturers, component suppliers, and enterprise software providers. Offerings include featured video showcases, Drone Expo stall walk-throughs, newsletter highlights, and portal banner placements. Submit an enquiry below to discuss partnership packages.",
+      showForm: true,
+      defaultUserType: "Customer",
     },
   },
   {
     keywords: [
-      "service",
-      "services",
-      "provide",
-      "offer",
-      "aerial",
-      "survey",
-      "inspection",
-      "সার্ভিস",
-      "সেবা",
-      "ড্রোন সেবা",
+      "event",
+      "events",
+      "expo",
+      "drone expo",
+      "mumbai",
+      "hyderabad",
+      "curtain raiser",
+      "conference",
+      "exhibition",
     ],
     reply: {
-      text: "DroneTV brings the drone, GIS, and AI ecosystem into one place:\n\n• Commercial Aerial Videography & Media\n• Topographical Survey & Land Mapping\n• Agricultural Crop Health & Spraying Analytics\n• Solar & Infrastructure Defect Inspection\n\nVisit our Services page for full details or request a quote!",
+      text: "DroneTV is an official media partner for premier industry gatherings, including Drone Expo 2025 in Hyderabad and the official portal launch at the Drone Expo Curtain Raiser in Goregaon, Mumbai. DroneTV also covers upcoming editions including Drone Expo Mumbai (Sept 25-27), featuring interviews with top exhibitors, innovators, and policy leaders.",
     },
   },
   {
     keywords: [
-      "course",
-      "courses",
-      "training",
-      "pilot",
-      "learn",
-      "কোর্স",
-      "ট্রেনিং",
-      "প্রশিক্ষণ",
-      "পাইলট",
-      "ক্লাস",
+      "video",
+      "videos",
+      "interview",
+      "interviews",
+      "youtube",
+      "coverage",
+      "media",
+      "showcase",
     ],
     reply: {
-      text: "We offer hands-on training with professional flight simulators and actual flight testing:\n\n1. DGCA Remote Pilot Certification\n2. GIS Surveying & Photogrammetry\n3. Precision Agriculture Drone Operations\n4. Drone Data Processing & AI Vision\n\nVisit our Courses page to view curriculum and upcoming batch openings.",
+      text: "DroneTV produces exclusive video content covering the UAV industry. Verified highlights include interviews with Dr. Pranay Kumar (RPTO Association), Gowrav Reddy (CropWings), Teja (Corteva on Drone Agriculture), Rini Bansal (Carbon Light design), Kalyan (XBOOM underwater drones), and Dev R (DroneTV Founder). Watch our coverage on YouTube at @indiadronetv.",
     },
   },
   {
     keywords: [
-      "contact",
-      "email",
-      "phone",
-      "call",
-      "address",
-      "reach",
-      "whatsapp",
-      "location",
-      "office",
-      "যোগাযোগ",
-      "ফোন",
-      "ঠিকানা",
-      "নাম্বার",
-      "হোয়াটসঅ্যাপ",
-      "অফিস",
+      "company",
+      "companies",
+      "marketplace",
+      "directory",
+      "partner",
+      "partners",
+      "vendor",
+      "manufacturer",
     ],
     reply: {
-      text: "You can reach DroneTV & ChatBot Academy directly:\n\n📧 Email: hello@chatbotacademy.com\n📞 Phone / WhatsApp: +880 1712 345678 / +91 75201 23555\n📍 Office: Dhaka, Bangladesh & Hyderabad, India\n🕒 Working Hours: Saturday - Thursday, 9:00 AM - 6:00 PM\n\nYou can also submit an enquiry right here in the chat!",
+      text: "DroneTV serves as India's #1 Drone, GIS, and AI Marketplace. It connects verified hardware manufacturers, software innovators, and commercial operators. Key partners and institutional collaborators include Telangana Govt, Andhra Govt, Odisha Govt, Corteva, Aparna, APGENCO, NCC Urban, Pioneer, IPAGE UMS, and Dev AI Labs.",
+    },
+  },
+  {
+    keywords: [
+      "about dronetv",
+      "about drone tv",
+      "about us",
+      "about you",
+      "what is dronetv",
+      "what is drone tv",
+      "who are you",
+      "founder",
+      "dev r",
+      "ceo",
+      "mission",
+      "vision",
+      "who founded",
+    ],
+    reply: {
+      text: "DroneTV (DroneTv.in) is the Voice of Drone Technology, GIS, and AI Technologies in India. Founded by Dev R (who also founded India Drone Academy and IPAGE UM Services), DroneTV unites innovators, pilots, manufacturers, and enterprise buyers under a unified digital media and marketplace ecosystem.",
     },
   },
   {
@@ -237,40 +290,31 @@ const RULES: Rule[] = [
       "hi",
       "hello",
       "hey",
-      "salam",
-      "assalamu alaikum",
       "greetings",
-      "হাই",
-      "হ্যালো",
-      "সালাম",
-      "নমস্কার",
-      "কেমন আছেন",
+      "good morning",
+      "good afternoon",
+      "good evening",
     ],
     reply: {
-      text: "Hello! Welcome to DroneTV Assistant 👋 How can I help you today? You can ask about our courses, course fees, duration, services, or how to register!",
+      text: "Hello! Welcome to the DroneTV Assistant. How can I assist you with drone technology, GIS, AI, media coverage, or our ecosystem partners today? Feel free to ask or pick one of the quick questions below.",
     },
   },
 ]
 
 export const FALLBACK_REPLY: BotReply = {
-  text: "I didn't quite catch that. You can ask about courses, fees/pricing, duration, services, or contact details - or select one of the quick questions above!",
+  text: "I do not have verified information on that specific topic. For unverified course fees, custom schedules, or specific technical enquiries, please submit the form below and our team will confirm the details for you.",
+  showForm: true,
+  defaultUserType: "Other",
 }
 
 const escapeRegex = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
 
 function isKeywordMatch(inputText: string, keyword: string): boolean {
-  const cleanInput = inputText.toLowerCase()
-  const cleanKw = keyword.toLowerCase()
+  const cleanInput = inputText.toLowerCase().trim()
+  const cleanKw = keyword.toLowerCase().trim()
 
   if (!cleanInput.includes(cleanKw)) return false
 
-  // For non-ASCII words (such as Bengali), substring/stem match is ideal to handle inflection suffixes (যেমন "কোর্সের")
-  const hasNonAscii = Array.from(cleanKw).some((char) => (char.codePointAt(0) ?? 0) > 127)
-  if (hasNonAscii) {
-    return true
-  }
-
-  // For English / ASCII, ensure whole word boundary so "hi" doesn't match "this" or "fee" match "coffee"
   const escaped = escapeRegex(cleanKw)
   const reg = new RegExp(`(^|[^a-zA-Z0-9])${escaped}([^a-zA-Z0-9]|$)`, "i")
   return reg.test(cleanInput)
