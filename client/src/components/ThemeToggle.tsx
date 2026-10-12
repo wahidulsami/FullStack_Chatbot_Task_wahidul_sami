@@ -50,7 +50,7 @@ export default function ThemeToggle() {
           onClick={() => setTheme("light")}
         >
           <span className="flex items-center gap-2">
-            <SunIcon className="size-3.5 text-amber-500" />
+            <SunIcon className="size-3.5 " />
             <span>Light</span>
           </span>
           {activeTheme === "light" && <CheckIcon className="size-3.5 text-primary" />}
@@ -66,7 +66,7 @@ export default function ThemeToggle() {
           onClick={() => setTheme("dark")}
         >
           <span className="flex items-center gap-2">
-            <MoonIcon className="size-3.5 text-sky-400" />
+            <MoonIcon className="size-3.5" />
             <span>Dark</span>
           </span>
           {activeTheme === "dark" && <CheckIcon className="size-3.5 text-primary" />}

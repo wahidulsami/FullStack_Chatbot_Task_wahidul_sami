@@ -6,7 +6,9 @@ const email = z
   .string()
   .trim()
   .toLowerCase()
+  .min(1, "Email is required")
   .pipe(z.email("Invalid email address"))
+  .pipe(z.string().max(100, "Email is too long"))
 
 export const MESSAGE_MAX_WORDS = 2000
 
@@ -28,18 +30,16 @@ export const createEnquirySchema = z.object({
   phone: z
     .string()
     .trim()
-    .regex(/^\+?[0-9\s-]{7,15}$/, "Invalid phone number"),
+    .min(1, "Phone number is required")
+    .regex(/^\+?[0-9\s-]{7,15}$/, "Invalid phone number (7 to 15 digits)")
+    .max(20, "Phone number is too long"),
   userType: z.enum(USER_TYPES),
   interest: z.string().trim().min(1, "Interest is required").max(150, "Interest is too long"),
   message: z
     .string()
     .trim()
-    .min(5, "Message is too short")
+    .min(5, "Message is too short (min 5 characters)")
     .max(2000, "Message cannot exceed 2000 characters")
-    .refine(
-      (value) => countWords(value) <= MESSAGE_MAX_WORDS,
-      `Message is too long (max ${MESSAGE_MAX_WORDS} words)`,
-    )
     .transform((value) => xss(value)),
 })
 

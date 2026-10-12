@@ -5,7 +5,9 @@ const email = z
   .string()
   .trim()
   .toLowerCase()
-  .pipe(z.email("Invalid email address"))
+  .min(1, "Email is required")
+  .email("Invalid email address")
+  .max(100, "Email is too long")
 
 export const MESSAGE_MAX_WORDS = 2000
 
@@ -24,7 +26,9 @@ export const enquirySchema = z.object({
   phone: z
     .string()
     .trim()
-    .regex(/^\+?[0-9\s-]{7,15}$/, "Invalid phone number"),
+    .min(1, "Phone number is required")
+    .regex(/^\+?[0-9\s-]{7,15}$/, "Invalid phone number (7 to 15 digits)")
+    .max(20, "Phone number is too long"),
   userType: z.enum(USER_TYPES),
   interest: z
     .string()
@@ -34,12 +38,8 @@ export const enquirySchema = z.object({
   message: z
     .string()
     .trim()
-    .min(5, "Message is too short")
-    .max(2000, "Message cannot exceed 2000 characters")
-    .refine(
-      (value) => countWords(value) <= MESSAGE_MAX_WORDS,
-      `Message is too long (max ${MESSAGE_MAX_WORDS} words)`,
-    ),
+    .min(5, "Message is too short (min 5 characters)")
+    .max(2000, "Message cannot exceed 2000 characters"),
 })
 
 export type EnquiryFormValues = z.infer<typeof enquirySchema>

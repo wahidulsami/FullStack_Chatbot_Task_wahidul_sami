@@ -20,9 +20,7 @@ import { USER_TYPES, type UserType } from "@/types/enquiry"
 import { useAppDispatch } from "@/store/hooks"
 import { submitEnquiry } from "@/store/enquiriesSlice"
 import {
-  countWords,
   enquirySchema,
-  MESSAGE_MAX_WORDS,
   type EnquiryFormValues,
 } from "@/validation/schemas"
 
@@ -63,13 +61,14 @@ export default function EnquiryForm({
   } = useForm<EnquiryFormValues>({
     resolver: zodResolver(enquirySchema),
     defaultValues: makeDefaultValues(defaultUserType),
+    mode: "onTouched",
   })
 
   const fieldId = (field: string) => `${idPrefix}${field}`
 
   const userType = watch("userType")
-  const messageValue = watch("message")
-  const messageWords = countWords(messageValue)
+  const messageValue = watch("message") || ""
+  const messageLength = messageValue.length
   const messageRegister = register("message")
 
   const handleMessageChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
@@ -78,14 +77,48 @@ export default function EnquiryForm({
       value = value.slice(0, 2000)
       event.target.value = value
     }
-    if (countWords(value) > MESSAGE_MAX_WORDS) {
-      event.target.value = value
-        .trim()
-        .split(/\s+/)
-        .slice(0, MESSAGE_MAX_WORDS)
-        .join(" ")
-    }
     messageRegister.onChange(event)
+  }
+
+  const handleMessageKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    const isControlKey =
+      event.ctrlKey ||
+      event.metaKey ||
+      event.altKey ||
+      [
+        "Backspace",
+        "Delete",
+        "ArrowLeft",
+        "ArrowRight",
+        "ArrowUp",
+        "ArrowDown",
+        "Tab",
+        "Escape",
+        "Home",
+        "End",
+        "PageUp",
+        "PageDown",
+      ].includes(event.key)
+    if (isControlKey) return
+    const current = messageValue || ""
+    const hasSelection =
+      event.currentTarget.selectionStart !== event.currentTarget.selectionEnd
+    if (current.length >= 2000 && !hasSelection) {
+      event.preventDefault()
+    }
+  }
+
+  const handleMessagePaste = (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    const pasted = event.clipboardData.getData("text")
+    const current = messageValue || ""
+    const start = event.currentTarget.selectionStart ?? 0
+    const end = event.currentTarget.selectionEnd ?? 0
+    const next = current.slice(0, start) + pasted + current.slice(end)
+    if (next.length > 2000) {
+      event.preventDefault()
+      const sliced = next.slice(0, 2000)
+      setValue("message", sliced, { shouldValidate: true, shouldDirty: true, shouldTouch: true })
+    }
   }
 
   const onSubmit = async (values: EnquiryFormValues) => {
@@ -177,7 +210,7 @@ export default function EnquiryForm({
         >
           <Field data-invalid={!!errors.name} className="space-y-1">
             <FieldLabel htmlFor={fieldId("name")} className="text-xs font-semibold text-foreground">
-              Full Name
+              Full Name <span className="text-destructive">*</span>
             </FieldLabel>
             <Input
               id={fieldId("name")}
@@ -187,12 +220,12 @@ export default function EnquiryForm({
               className="h-11 min-h-[44px] w-full rounded-xl border-border bg-background px-3 text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
               {...register("name")}
             />
-            <FieldError errors={[errors.name]} />
+            <FieldError className="text-xs font-medium text-destructive mt-1" errors={[errors.name]} />
           </Field>
 
           <Field data-invalid={!!errors.email} className="space-y-1">
             <FieldLabel htmlFor={fieldId("email")} className="text-xs font-semibold text-foreground">
-              Email Address
+              Email Address <span className="text-destructive">*</span>
             </FieldLabel>
             <Input
               id={fieldId("email")}
@@ -203,12 +236,12 @@ export default function EnquiryForm({
               className="h-11 min-h-[44px] w-full rounded-xl border-border bg-background px-3 text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
               {...register("email")}
             />
-            <FieldError errors={[errors.email]} />
+            <FieldError className="text-xs font-medium text-destructive mt-1" errors={[errors.email]} />
           </Field>
 
           <Field data-invalid={!!errors.phone} className="space-y-1">
             <FieldLabel htmlFor={fieldId("phone")} className="text-xs font-semibold text-foreground">
-              Phone Number
+              Phone Number <span className="text-destructive">*</span>
             </FieldLabel>
             <Input
               id={fieldId("phone")}
@@ -219,11 +252,13 @@ export default function EnquiryForm({
               className="h-11 min-h-[44px] w-full rounded-xl border-border bg-background px-3 text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
               {...register("phone")}
             />
-            <FieldError errors={[errors.phone]} />
+            <FieldError className="text-xs font-medium text-destructive mt-1" errors={[errors.phone]} />
           </Field>
 
           <Field data-invalid={!!errors.userType} className="space-y-1">
-            <FieldLabel className="text-xs font-semibold text-foreground">I am a</FieldLabel>
+            <FieldLabel className="text-xs font-semibold text-foreground">
+              I am a <span className="text-destructive">*</span>
+            </FieldLabel>
             <Select
               value={userType}
               onValueChange={(value) =>
@@ -244,12 +279,12 @@ export default function EnquiryForm({
                 ))}
               </SelectContent>
             </Select>
-            <FieldError errors={[errors.userType]} />
+            <FieldError className="text-xs font-medium text-destructive mt-1" errors={[errors.userType]} />
           </Field>
 
           <Field className={cn((isExpanded || !compact) && "sm:col-span-2", "space-y-1")} data-invalid={!!errors.interest}>
             <FieldLabel htmlFor={fieldId("interest")} className="text-xs font-semibold text-foreground">
-              Topic or Service of Interest
+              Topic or Service of Interest <span className="text-destructive">*</span>
             </FieldLabel>
             <Input
               id={fieldId("interest")}
@@ -259,12 +294,12 @@ export default function EnquiryForm({
               className="h-11 min-h-[44px] w-full rounded-xl border-border bg-background px-3 text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
               {...register("interest")}
             />
-            <FieldError errors={[errors.interest]} />
+            <FieldError className="text-xs font-medium text-destructive mt-1" errors={[errors.interest]} />
           </Field>
 
           <Field className={cn((isExpanded || !compact) && "sm:col-span-2", "space-y-1")} data-invalid={!!errors.message}>
             <FieldLabel htmlFor={fieldId("message")} className="text-xs font-semibold text-foreground">
-              Message / Inquiries
+              Message / Inquiries <span className="text-destructive">*</span>
             </FieldLabel>
             <Textarea
               id={fieldId("message")}
@@ -275,19 +310,21 @@ export default function EnquiryForm({
               className="w-full min-h-28 sm:min-h-0 sm:h-30 rounded-xl border-border bg-background p-3 text-xs sm:text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 leading-relaxed"
               {...messageRegister}
               onChange={handleMessageChange}
+              onKeyDown={handleMessageKeyDown}
+              onPaste={handleMessagePaste}
             />
             <div className="flex items-center justify-between text-[11px] text-muted-foreground pt-1">
               <span>Min 5 characters</span>
               <span
                 className={cn(
-                  ((messageValue?.length || 0) >= 2000 || messageWords >= MESSAGE_MAX_WORDS) &&
-                    "text-destructive font-bold",
+                  messageLength >= 2000 && "text-destructive font-bold",
                 )}
               >
-                {messageValue?.length || 0} / 2000 characters
+                {messageLength} / 2000 characters
+                {messageLength >= 2000 && " (Maximum reached)"}
               </span>
             </div>
-            <FieldError errors={[errors.message]} />
+            <FieldError className="text-xs font-medium text-destructive mt-1" errors={[errors.message]} />
           </Field>
         </div>
 

@@ -7,7 +7,6 @@ import {
   HelpCircleIcon,
   Maximize2Icon,
   Minimize2Icon,
-  PhoneIcon,
   RotateCcwIcon,
   XIcon,
 } from "lucide-react"
