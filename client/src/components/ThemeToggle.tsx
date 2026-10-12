@@ -17,7 +17,7 @@ export default function ThemeToggle() {
       <DropdownMenuTrigger
         className={cn(
           buttonVariants({ variant: "outline", size: "icon-sm" }),
-          "relative cursor-pointer rounded-full border-border/80 bg-background/80 hover:bg-muted/80 backdrop-blur-sm transition-transform active:scale-95"
+          "relative cursor-pointer rounded-xl border-border/80 bg-background/80 hover:bg-muted/80 backdrop-blur-sm transition-transform active:scale-95"
         )}
         aria-label="Select theme mode"
         title="Select theme mode"

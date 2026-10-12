@@ -39,19 +39,21 @@ export default function Contact() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6 py-12 space-y-12">
-      {/* Header */}
-      <div className="mx-auto max-w-2xl text-center space-y-3">
-        <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3.5 py-1 text-xs font-semibold text-primary">
-          <MessageSquareIcon className="size-3.5" />
-          Direct Communication Hub
+      {/* Header with Double-Bezel Framing */}
+      <div className="rounded-[2rem] p-1.5 bg-muted/40 border border-border/80 shadow-xs">
+        <div className="rounded-[calc(2rem-0.375rem)] bg-card p-8 sm:p-10 border border-border/40 text-center space-y-3">
+          <div className="inline-flex items-center gap-1.5 rounded-xl bg-primary/10 px-3.5 py-1 text-xs font-semibold text-primary">
+            <MessageSquareIcon className="size-3.5" />
+            Direct Communication Hub
+          </div>
+          <h1 className="font-heading text-3xl sm:text-5xl font-black tracking-tight text-foreground">
+            Contact Flight Academy
+          </h1>
+          <p className="text-muted-foreground text-sm sm:text-base leading-relaxed max-w-2xl mx-auto">
+            Have questions regarding pilot licenses, enterprise surveys, or course fees?
+            Submit an enquiry or message our team.
+          </p>
         </div>
-        <h1 className="font-heading text-3xl sm:text-5xl font-black tracking-tight text-foreground">
-          Contact Flight Academy
-        </h1>
-        <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
-          Have questions regarding pilot licenses, enterprise surveys, or course fees?
-          Submit an enquiry or message our team.
-        </p>
       </div>
 
       {/* Grid: Contact Information Cards + Direct Enquiry Form */}
@@ -110,11 +112,11 @@ export default function Contact() {
                 <span>Prefer Instant Answers?</span>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Our 24/7 rule-based chatbot answers course fees, schedule questions, and admission steps instantly in English or বাংলা.
+                Our 24/7 rule-based chatbot answers course fees, schedule questions, and admission steps instantly.
               </p>
               <Button
                 onClick={triggerChat}
-                className="w-full rounded-full bg-primary text-primary-foreground font-semibold hover:bg-primary/90 text-xs shadow-xs"
+                className="w-full rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 text-xs shadow-xs"
               >
                 <SparklesIcon className="size-3.5 mr-1.5" />
                 Ask Assistant Now

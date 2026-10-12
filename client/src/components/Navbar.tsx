@@ -33,14 +33,14 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-4 z-40 w-full px-4 sm:px-6">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 rounded-full border border-border/80 bg-card/85 px-4 sm:px-6 shadow-sm backdrop-blur-xl transition-all">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 rounded-2xl border border-border/80 bg-card/85 px-4 sm:px-6 shadow-sm backdrop-blur-xl transition-all">
         {/* Brand Logo */}
         <Link
           to="/"
           onClick={() => setMobileMenuOpen(false)}
           className="group flex items-center gap-2.5 font-heading text-sm sm:text-base font-bold tracking-tight text-foreground transition-opacity hover:opacity-90"
         >
-          <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-xs transition-transform group-hover:scale-105">
+          <span className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-xs transition-transform group-hover:scale-105">
             <PlaneTakeoffIcon className="size-4.5 stroke-[2.2]" />
           </span>
           <span className="flex items-center gap-1.5">
@@ -51,14 +51,14 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden md:flex items-center gap-1 bg-muted/40 p-1 rounded-full border border-border/50">
+        <nav className="hidden md:flex items-center gap-1 bg-muted/40 p-1 rounded-xl border border-border/50">
           {links.map((link) => (
             <NavLink
               key={link.to}
               to={link.to}
               end={link.to === "/"}
               className={({ isActive }) =>
-                `rounded-full px-3.5 py-1.5 text-xs font-medium transition-all ${
+                `rounded-xl px-3.5 py-1.5 text-xs font-medium transition-all ${
                   isActive
                     ? "bg-background text-foreground shadow-2xs font-semibold"
                     : "text-muted-foreground hover:text-foreground hover:bg-background/50"
@@ -78,7 +78,7 @@ export default function Navbar() {
               <Button
                 render={<Link to="/admin" />}
                 size="sm"
-                className="rounded-full bg-primary text-primary-foreground font-medium hover:bg-primary/90 text-xs px-3.5"
+                className="rounded-xl bg-primary text-primary-foreground font-medium hover:bg-primary/90 text-xs px-3.5"
               >
                 <LayoutDashboardIcon className="size-3.5 mr-1" />
                 Dashboard
@@ -89,7 +89,7 @@ export default function Navbar() {
                 onClick={() => void handleLogout()}
                 title="Logout"
                 aria-label="Logout"
-                className="rounded-full text-muted-foreground hover:text-destructive"
+                className="rounded-xl text-muted-foreground hover:text-destructive"
               >
                 <LogOutIcon className="size-4" />
               </Button>
@@ -98,7 +98,7 @@ export default function Navbar() {
             <Button
               render={<Link to="/admin/login" />}
               size="sm"
-              className="rounded-full bg-primary text-primary-foreground font-semibold hover:bg-primary/90 text-xs px-4 py-1.5 shadow-xs transition-all active:scale-[0.98]"
+              className="rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 text-xs px-4 py-1.5 shadow-xs transition-all active:scale-[0.98]"
             >
               Admin Login
             </Button>
@@ -113,7 +113,7 @@ export default function Navbar() {
             size="icon-sm"
             onClick={() => setMobileMenuOpen((v) => !v)}
             aria-label="Toggle navigation menu"
-            className="rounded-full text-foreground hover:bg-muted"
+            className="rounded-xl text-foreground hover:bg-muted"
           >
             {mobileMenuOpen ? <XIcon className="size-5" /> : <MenuIcon className="size-5" />}
           </Button>
@@ -151,7 +151,7 @@ export default function Navbar() {
                   <Button
                     render={<Link to="/admin" />}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex-1 rounded-full bg-primary text-primary-foreground font-semibold text-xs"
+                    className="flex-1 rounded-xl bg-primary text-primary-foreground font-semibold text-xs"
                   >
                     <LayoutDashboardIcon className="size-3.5 mr-1" />
                     Admin Dashboard
@@ -160,7 +160,7 @@ export default function Navbar() {
                     variant="outline"
                     size="sm"
                     onClick={() => void handleLogout()}
-                    className="rounded-full text-xs"
+                    className="rounded-xl text-xs"
                   >
                     Logout
                   </Button>
@@ -169,7 +169,7 @@ export default function Navbar() {
                 <Button
                   render={<Link to="/admin/login" />}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full rounded-full bg-primary text-primary-foreground font-semibold text-xs py-2 shadow-xs"
+                  className="w-full rounded-xl bg-primary text-primary-foreground font-semibold text-xs py-2 shadow-xs"
                 >
                   Admin Login
                 </Button>

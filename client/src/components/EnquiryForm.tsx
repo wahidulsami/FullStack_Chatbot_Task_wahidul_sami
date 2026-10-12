@@ -109,7 +109,7 @@ export default function EnquiryForm({
           </p>
           <Button
             variant="outline"
-            className="mt-3 rounded-full text-xs"
+            className="mt-3 rounded-xl text-xs"
             onClick={() => setSent(false)}
           >
             Submit Another Message
@@ -256,7 +256,7 @@ export default function EnquiryForm({
             type="submit"
             disabled={isSubmitting}
             className={cn(
-              "group rounded-full bg-primary text-primary-foreground font-semibold hover:bg-primary/90 shadow-sm transition-all duration-300 active:scale-[0.98] inline-flex items-center justify-center gap-2",
+              "group rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 shadow-sm transition-all duration-300 active:scale-[0.98] inline-flex items-center justify-center gap-2",
               compact ? "w-full text-xs h-9" : "w-full sm:w-auto px-6 py-3 text-xs sm:text-sm h-11"
             )}
           >
@@ -268,7 +268,7 @@ export default function EnquiryForm({
             ) : (
               <>
                 <span>Send Enquiry Message</span>
-                <span className="flex size-6 items-center justify-center rounded-full bg-primary-foreground/10 transition-transform duration-300 group-hover:translate-x-1">
+                <span className="flex size-6 items-center justify-center rounded-lg bg-primary-foreground/10 transition-transform duration-300 group-hover:translate-x-1">
                   <ArrowRightIcon className="size-3 stroke-[2.5]" />
                 </span>
               </>
