@@ -1,4 +1,4 @@
-import { useId, useState } from "react"
+import { useId, useState, type ChangeEvent } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ArrowRightIcon, CheckCircle2Icon, LoaderCircleIcon } from "lucide-react"
@@ -19,12 +19,16 @@ import { cn } from "cn"
 import { USER_TYPES, type UserType } from "@/types/enquiry"
 import { useAppDispatch } from "@/store/hooks"
 import { submitEnquiry } from "@/store/enquiriesSlice"
-import { enquirySchema, type EnquiryFormValues } from "@/validation/schemas"
-
-const MESSAGE_MAX = 2000
+import {
+  countWords,
+  enquirySchema,
+  MESSAGE_MAX_WORDS,
+  type EnquiryFormValues,
+} from "@/validation/schemas"
 
 type EnquiryFormProps = {
   compact?: boolean
+  isExpanded?: boolean
   defaultUserType?: UserType
   onSuccess?: () => void
 }
@@ -40,6 +44,7 @@ const makeDefaultValues = (userType: UserType = "Student"): EnquiryFormValues =>
 
 export default function EnquiryForm({
   compact = false,
+  isExpanded = false,
   defaultUserType,
   onSuccess,
 }: EnquiryFormProps) {
@@ -63,7 +68,21 @@ export default function EnquiryForm({
   const fieldId = (field: string) => `${idPrefix}${field}`
 
   const userType = watch("userType")
-  const messageLength = watch("message").length
+  const messageValue = watch("message")
+  const messageWords = countWords(messageValue)
+  const messageRegister = register("message")
+
+  const handleMessageChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    const value = event.target.value
+    if (countWords(value) > MESSAGE_MAX_WORDS) {
+      event.target.value = value
+        .trim()
+        .split(/\s+/)
+        .slice(0, MESSAGE_MAX_WORDS)
+        .join(" ")
+    }
+    messageRegister.onChange(event)
+  }
 
   const onSubmit = async (values: EnquiryFormValues) => {
     const result = await dispatch(submitEnquiry(values))
@@ -99,7 +118,7 @@ export default function EnquiryForm({
   if (sent) {
     return (
       <div className={cn(!compact && "rounded-xl p-2 bg-muted/40 border border-border shadow-xl")}>
-        <div className={cn("flex flex-col items-center gap-3 py-10 text-center", !compact && "rounded-[calc(1.225rem-0.5rem)] bg-card border border-border/40 p-8 shadow-xs")}>
+        <div className={cn("flex flex-col items-center gap-3 py-10 text-center", !compact && "rounded-xl bg-card border border-border/40 p-8 shadow-xs")}>
           <div className="flex size-14 items-center justify-center rounded-xl bg-primary/20 text-primary">
             <CheckCircle2Icon className="size-8" />
           </div>
@@ -144,7 +163,14 @@ export default function EnquiryForm({
           </Alert>
         )}
 
-        <div className={cn(compact ? "grid grid-cols-1 gap-3" : "grid grid-cols-1 sm:grid-cols-2 gap-4")}>
+        {/* Short fields layout: two columns in expanded mode or non-compact view */}
+        <div
+          className={cn(
+            isExpanded || !compact
+              ? "grid grid-cols-1 sm:grid-cols-2 gap-3.5"
+              : "grid grid-cols-1 gap-3"
+          )}
+        >
           <Field data-invalid={!!errors.name} className="space-y-1">
             <FieldLabel htmlFor={fieldId("name")} className="text-xs font-semibold text-foreground">
               Full Name
@@ -153,7 +179,7 @@ export default function EnquiryForm({
               id={fieldId("name")}
               placeholder="e.g. Alex Vance"
               aria-invalid={!!errors.name}
-              className="h-10 w-full rounded-xl border-border bg-background px-3 text-xs sm:text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+              className="h-11 min-h-[44px] w-full rounded-xl border-border bg-background px-3 text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
               {...register("name")}
             />
             <FieldError errors={[errors.name]} />
@@ -168,7 +194,7 @@ export default function EnquiryForm({
               type="email"
               placeholder="alex@example.com"
               aria-invalid={!!errors.email}
-              className="h-10 w-full rounded-xl border-border bg-background px-3 text-xs sm:text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+              className="h-11 min-h-[44px] w-full rounded-xl border-border bg-background px-3 text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
               {...register("email")}
             />
             <FieldError errors={[errors.email]} />
@@ -183,7 +209,7 @@ export default function EnquiryForm({
               type="tel"
               placeholder="+91 98765 43210"
               aria-invalid={!!errors.phone}
-              className="h-10 w-full rounded-xl border-border bg-background px-3 text-xs sm:text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+              className="h-11 min-h-[44px] w-full rounded-xl border-border bg-background px-3 text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
               {...register("phone")}
             />
             <FieldError errors={[errors.phone]} />
@@ -198,7 +224,7 @@ export default function EnquiryForm({
               }
             >
               <SelectTrigger
-                className="h-10 w-full rounded-xl border-border bg-background px-3 text-xs sm:text-sm"
+                className="h-11 min-h-[44px] w-full rounded-xl border-border bg-background px-3 text-sm"
                 aria-invalid={!!errors.userType}
               >
                 <SelectValue />
@@ -214,7 +240,7 @@ export default function EnquiryForm({
             <FieldError errors={[errors.userType]} />
           </Field>
 
-          <Field className={cn(!compact && "sm:col-span-2", "space-y-1")} data-invalid={!!errors.interest}>
+          <Field className={cn((isExpanded || !compact) && "sm:col-span-2", "space-y-1")} data-invalid={!!errors.interest}>
             <FieldLabel htmlFor={fieldId("interest")} className="text-xs font-semibold text-foreground">
               Topic or Service of Interest
             </FieldLabel>
@@ -222,13 +248,13 @@ export default function EnquiryForm({
               id={fieldId("interest")}
               placeholder="e.g. Drone Expo Media, Drone Doctor Support, RPTO Pilot Training, or GIS Mapping"
               aria-invalid={!!errors.interest}
-              className="h-10 w-full rounded-xl border-border bg-background px-3 text-xs sm:text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+              className="h-11 min-h-[44px] w-full rounded-xl border-border bg-background px-3 text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
               {...register("interest")}
             />
             <FieldError errors={[errors.interest]} />
           </Field>
 
-          <Field className={cn(!compact && "sm:col-span-2", "space-y-1")} data-invalid={!!errors.message}>
+          <Field className={cn((isExpanded || !compact) && "sm:col-span-2", "space-y-1")} data-invalid={!!errors.message}>
             <FieldLabel htmlFor={fieldId("message")} className="text-xs font-semibold text-foreground">
               Message / Inquiries
             </FieldLabel>
@@ -237,13 +263,18 @@ export default function EnquiryForm({
               rows={compact ? 3 : 5}
               placeholder="Tell us what you are looking for..."
               aria-invalid={!!errors.message}
-              className="w-full h-10 sm:h-30 rounded-xl border-border bg-background p-3 text-xs sm:text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 leading-relaxed"
-              {...register("message")}
+              className="w-full min-h-28 sm:min-h-0 sm:h-30 rounded-xl border-border bg-background p-3 text-xs sm:text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 leading-relaxed"
+              {...messageRegister}
+              onChange={handleMessageChange}
             />
             <div className="flex items-center justify-between text-[11px] text-muted-foreground pt-1">
               <span>Min 5 characters</span>
-              <span className={cn(messageLength > MESSAGE_MAX && "text-destructive font-bold")}>
-                {messageLength} / {MESSAGE_MAX}
+              <span
+                className={cn(
+                  messageWords >= MESSAGE_MAX_WORDS && "text-destructive font-bold",
+                )}
+              >
+                {messageWords} / {MESSAGE_MAX_WORDS} words
               </span>
             </div>
             <FieldError errors={[errors.message]} />
@@ -258,8 +289,8 @@ export default function EnquiryForm({
             type="submit"
             disabled={isSubmitting}
             className={cn(
-              "group w-full rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 shadow-sm transition-all duration-300 active:scale-[0.98] inline-flex items-center justify-center gap-2 h-10 text-xs sm:text-sm",
-              !compact && "sm:w-auto px-6 py-3 h-11"
+              "group w-full rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 shadow-sm transition-all duration-300 active:scale-[0.98] inline-flex items-center justify-center gap-2 h-11 text-xs sm:text-sm",
+              !compact && "sm:w-auto px-6 py-3"
             )}
           >
             {isSubmitting ? (
@@ -287,7 +318,7 @@ export default function EnquiryForm({
 
   return (
     <div className="rounded-xl p-2 bg-muted/40 border border-border shadow-xl ring-1 ring-border/20 backdrop-blur-md">
-      <div className="rounded-[calc(1.225rem-0.5rem)] bg-card border border-border/40 p-6 sm:p-8 shadow-xs">
+      <div className="rounded-xl bg-card border border-border/40 p-6 sm:p-8 shadow-xs">
         {formBody}
       </div>
     </div>

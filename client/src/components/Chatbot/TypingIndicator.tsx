@@ -1,39 +1,24 @@
-import { BotIcon, SparklesIcon } from "lucide-react"
-import { Bubble, BubbleContent } from "@/components/ui/bubble"
-import { Message, MessageAvatar, MessageContent } from "@/components/ui/message"
-
-const DOT_DELAYS = [0, 160, 320]
+import { BotIcon } from "lucide-react"
 
 export default function TypingIndicator() {
   return (
-    <Message
-      align="start"
+    <div
+      role="status"
       aria-label="DroneTV Assistant is typing"
-      className="animate-bubble-in motion-reduce:animate-none"
+      className="flex items-start gap-2.5 animate-bubble-in"
     >
-      <MessageAvatar className="size-7 rounded-xl bg-primary/15 text-primary">
+      {/* Bot small avatar (rounded-xl) */}
+      <span className="flex size-7 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary mt-0.5">
         <BotIcon className="size-4 animate-pulse" />
-      </MessageAvatar>
-      <MessageContent>
-        <Bubble variant="muted" className="rounded-xl border border-border/50 bg-muted/60">
-          <BubbleContent className="flex items-center gap-2.5 px-3 py-2 text-xs text-muted-foreground">
-            <span className="font-semibold tracking-tight text-foreground flex items-center gap-1">
-              <SparklesIcon className="size-3 text-primary animate-spin" style={{ animationDuration: "3s" }} />
-              DroneTV Assistant
-            </span>
-            <div className="flex items-center gap-1">
-              {DOT_DELAYS.map((delay) => (
-                <span
-                  key={delay}
-                  style={{ animationDelay: `${delay}ms` }}
-                  className="size-1.5 rounded-full bg-primary animate-typing-dot motion-reduce:animate-none"
-                />
-              ))}
-            </div>
-            <span className="sr-only">DroneTV Assistant is typing...</span>
-          </BubbleContent>
-        </Bubble>
-      </MessageContent>
-    </Message>
+      </span>
+
+      {/* Bot bubble (rounded-xl) */}
+      <div className="flex max-w-[80%] items-center gap-1.5 rounded-xl border border-border/60 bg-muted/80 px-4 py-3 text-sm text-foreground shadow-xs">
+        <span className="size-2 rounded-full bg-orange-500 animate-bounce" style={{ animationDelay: "0ms" }} />
+        <span className="size-2 rounded-full bg-orange-500 animate-bounce" style={{ animationDelay: "160ms" }} />
+        <span className="size-2 rounded-full bg-orange-500 animate-bounce" style={{ animationDelay: "320ms" }} />
+        <span className="sr-only">DroneTV Assistant is typing...</span>
+      </div>
+    </div>
   )
 }

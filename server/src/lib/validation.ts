@@ -8,6 +8,13 @@ const email = z
   .toLowerCase()
   .pipe(z.email("Invalid email address"))
 
+export const MESSAGE_MAX_WORDS = 2000
+
+export const countWords = (value: string): number => {
+  const trimmed = value.trim()
+  return trimmed ? trimmed.split(/\s+/).length : 0
+}
+
 export const loginSchema = z.object({
   email,
   password: z.string().min(1, "Password is required"),
@@ -28,7 +35,11 @@ export const createEnquirySchema = z.object({
     .string()
     .trim()
     .min(5, "Message is too short")
-    .max(2000, "Message is too long (max 2000 characters)")
+    .max(40000, "Message is too long")
+    .refine(
+      (value) => countWords(value) <= MESSAGE_MAX_WORDS,
+      `Message is too long (max ${MESSAGE_MAX_WORDS} words)`,
+    )
     .transform((value) => xss(value)),
 })
 

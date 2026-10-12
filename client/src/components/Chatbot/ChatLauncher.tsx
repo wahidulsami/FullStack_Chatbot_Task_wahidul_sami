@@ -7,13 +7,23 @@ import { playChatChime, resumeAudioContext } from "./chatSound"
 export default function ChatLauncher() {
   const [open, setOpen] = useState(false)
   const [isExpanded, setIsExpanded] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
   const [showGreetingBubble, setShowGreetingBubble] = useState(false)
   const hasPlayedSoundRef = useRef(false)
+  const launcherRef = useRef<HTMLButtonElement>(null)
 
-  // Landing page behavior: on page load/mount, the chat window stays CLOSED,
-  // but after a short delay (1.2s), a welcoming speech bubble appears and a gentle chime sound plays.
+  // Track viewport size for mobile full-screen sheet vs desktop modes
   useEffect(() => {
-    // Resume audio context on first user interaction if browser blocked auto-playback
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640)
+    }
+    checkMobile()
+    window.addEventListener("resize", checkMobile)
+    return () => window.removeEventListener("resize", checkMobile)
+  }, [])
+
+  // Landing page behavior: on mount, chat stays closed; after 1.2s greeting bubble appears and chime plays
+  useEffect(() => {
     const unlockAudio = () => {
       resumeAudioContext()
       if (!hasPlayedSoundRef.current) {
@@ -42,6 +52,17 @@ export default function ChatLauncher() {
     }
   }, [])
 
+  // Lock body scroll when in expanded dialog or mobile full-screen mode
+  useEffect(() => {
+    if (open && (isExpanded || isMobile)) {
+      const prevOverflow = document.body.style.overflow
+      document.body.style.overflow = "hidden"
+      return () => {
+        document.body.style.overflow = prevOverflow
+      }
+    }
+  }, [open, isExpanded, isMobile])
+
   const handleOpenChat = () => {
     setShowGreetingBubble(false)
     setOpen(true)
@@ -50,41 +71,100 @@ export default function ChatLauncher() {
   const handleCloseChat = () => {
     setOpen(false)
     setIsExpanded(false)
+    // Accessibility: Return focus to launcher button upon closing
+    setTimeout(() => {
+      launcherRef.current?.focus()
+    }, 50)
   }
 
   const handleToggleExpand = () => {
     setIsExpanded((prev) => !prev)
   }
 
+  // Close on Escape key press
+  useEffect(() => {
+    if (!open) return
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        handleCloseChat()
+      }
+    }
+    window.addEventListener("keydown", onKeyDown)
+    return () => window.removeEventListener("keydown", onKeyDown)
+  }, [open])
+
+  // Hide launcher while chat is open in expanded or mobile mode.
+  // In compact mode on desktop, launcher is visible and turns into X (the single close control).
+  const hideLauncher = open && (isExpanded || isMobile)
+
   return (
     <>
-      {/* ─── Expand Backdrop Overlay (active when expanded) ───────── */}
-      {open && isExpanded && (
+      {/* ─── Expanded Mode Backdrop (Desktop) ─────────────────────────── */}
+      {open && isExpanded && !isMobile && (
         <div
           role="presentation"
           aria-hidden="true"
-          onClick={() => setIsExpanded(false)}
-          className="fixed inset-0 z-40 bg-background/70 backdrop-blur-sm transition-opacity duration-300"
+          onClick={handleCloseChat}
+          className="fixed inset-0 z-[90] bg-black/60 backdrop-blur-sm transition-opacity duration-300"
         />
       )}
 
-      {/* ─── Chat Window (Floating or Expanded with Double-Bezel) ──── */}
+      {/* ─── Chat Window Container ───────────────────────────────────── */}
       {open && (
-        <div
-          className={`fixed z-50 flex flex-col overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] ${
-            isExpanded
-              ? "inset-2 sm:inset-4 md:inset-6 lg:inset-8 rounded-xl p-1.5 sm:p-2 bg-muted/40 border border-border shadow-2xl backdrop-blur-md"
-              : "inset-x-3 bottom-20 top-16 sm:top-auto sm:inset-auto sm:right-6 sm:bottom-24 sm:h-[650px] sm:w-[460px] rounded-xl p-1.5 bg-muted/40 border border-border shadow-2xl backdrop-blur-md"
-          }`}
-        >
-          <div className="size-full overflow-hidden rounded-[calc(1.225rem-0.375rem)] bg-card border border-border/40 shadow-xs flex flex-col">
-            <ChatWindow
-              onClose={handleCloseChat}
-              isExpanded={isExpanded}
-              onToggleExpand={handleToggleExpand}
-            />
-          </div>
-        </div>
+        <>
+          {isMobile ? (
+            /* Mobile Full-Screen Sheet (<640px) */
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-label="DroneTV Chat Assistant"
+              className="fixed inset-0 z-[100] h-[100dvh] w-full bg-card flex flex-col overflow-hidden"
+            >
+              <ChatWindow
+                onClose={handleCloseChat}
+                isExpanded={false}
+                isMobile={true}
+                isCompact={false}
+              />
+            </div>
+          ) : isExpanded ? (
+            /* Desktop Expanded Centered Dialog (min(920px, 100vw-4rem)) */
+            <div
+              className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 md:p-8 pointer-events-none"
+              role="presentation"
+            >
+              <div
+                role="dialog"
+                aria-modal="true"
+                aria-label="DroneTV Chat Assistant"
+                className="pointer-events-auto relative flex flex-col overflow-hidden w-[min(920px,calc(100vw-4rem))] h-[min(90dvh,900px)] rounded-xl border border-border/80 bg-card shadow-2xl animate-bubble-in"
+              >
+                <ChatWindow
+                  onClose={handleCloseChat}
+                  isExpanded={true}
+                  isMobile={false}
+                  isCompact={false}
+                  onToggleExpand={handleToggleExpand}
+                />
+              </div>
+            </div>
+          ) : (
+            /* Desktop Compact Mode (min(420px, 100vw-2rem)) */
+            <div
+              role="region"
+              aria-label="DroneTV Chat Assistant"
+              className="fixed bottom-24 right-6 z-50 w-[min(420px,calc(100vw-2rem))] h-[min(680px,calc(100dvh-8rem))] rounded-xl border border-border/80 bg-card shadow-2xl flex flex-col overflow-hidden animate-bubble-in"
+            >
+              <ChatWindow
+                onClose={handleCloseChat}
+                isExpanded={false}
+                isMobile={false}
+                isCompact={true}
+                onToggleExpand={handleToggleExpand}
+              />
+            </div>
+          )}
+        </>
       )}
 
       {/* ─── Landing Welcome Speech Bubble (When Chat is Closed) ──── */}
@@ -92,9 +172,9 @@ export default function ChatLauncher() {
         <div
           role="dialog"
           aria-label="Welcome message"
-          className="fixed right-3 bottom-20 sm:right-6 sm:bottom-24 z-40 max-w-[calc(100vw-1.5rem)] sm:max-w-[320px] rounded-xl p-1.5 bg-muted/40 border border-border shadow-2xl backdrop-blur-md animate-bubble-in motion-reduce:animate-none select-none"
+          className="fixed right-3 bottom-20 sm:right-6 sm:bottom-24 z-40 max-w-[calc(100vw-1.5rem)] sm:max-w-[320px] rounded-xl p-1.5 bg-muted/40 border border-border shadow-2xl backdrop-blur-md animate-bubble-in select-none"
         >
-          <div className="rounded-[calc(1.225rem-0.375rem)] bg-card p-3.5 border border-border/40 shadow-xs flex items-start gap-2.5">
+          <div className="rounded-xl bg-card p-3.5 border border-border/40 shadow-xs flex items-start gap-2.5">
             <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
               <BotIcon className="size-5" />
             </span>
@@ -102,7 +182,7 @@ export default function ChatLauncher() {
               <div className="flex items-center gap-1.5">
                 <span className="text-xs font-bold text-foreground">DroneTV Assistant</span>
                 <span className="flex items-center gap-1 text-[10px] font-medium text-emerald-600 dark:text-emerald-400">
-                  <span className="size-1.5 rounded-xl bg-emerald-500 animate-pulse" />
+                  <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
                   Online
                 </span>
               </div>
@@ -122,7 +202,7 @@ export default function ChatLauncher() {
                 <button
                   type="button"
                   onClick={() => setShowGreetingBubble(false)}
-                  className="text-[11px] text-muted-foreground hover:text-foreground transition-colors px-1.5 py-0.5 rounded-xl hover:bg-muted/60"
+                  className="text-[11px] text-muted-foreground hover:text-foreground transition-colors px-1.5 py-0.5 rounded-lg hover:bg-muted/60"
                 >
                   Later
                 </button>
@@ -133,7 +213,7 @@ export default function ChatLauncher() {
               type="button"
               aria-label="Dismiss greeting"
               onClick={() => setShowGreetingBubble(false)}
-              className="text-muted-foreground hover:text-foreground p-1 rounded-xl hover:bg-muted/60 transition-colors"
+              className="text-muted-foreground hover:text-foreground p-1 rounded-lg hover:bg-muted/60 transition-colors"
             >
               <XIcon className="size-3.5" />
             </button>
@@ -141,34 +221,37 @@ export default function ChatLauncher() {
         </div>
       )}
 
-      {/* ─── Floating Chat Launcher Button (Vibrant Yellow Brand) ─── */}
-      <Button
-        type="button"
-        aria-label={open ? "Close chat window" : "Open chat with DroneTV Assistant"}
-        onClick={() => {
-          if (open) {
-            handleCloseChat()
-          } else {
-            handleOpenChat()
-          }
-        }}
-        size="icon-lg"
-        className="fixed right-4 bottom-4 sm:right-6 sm:bottom-6 z-40 size-14 rounded-xl shadow-2xl bg-primary text-primary-foreground hover:bg-primary/95 transition-all duration-300 hover:scale-105 active:scale-95"
-      >
-        {open ? (
-          <XIcon className="size-6 transition-transform rotate-0 hover:rotate-90" />
-        ) : (
-          <div className="relative flex items-center justify-center">
-            <MessageCircleIcon className="size-6" />
-            {!showGreetingBubble && (
-              <span className="absolute -top-1 -right-1 flex size-3">
-                <span className="absolute inline-flex size-full animate-ping rounded-xl bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex size-3 rounded-xl bg-emerald-500 border-2 border-background" />
-              </span>
-            )}
-          </div>
-        )}
-      </Button>
+      {/* ─── Floating Chat Launcher Button ────────────────────────────── */}
+      {!hideLauncher && (
+        <Button
+          ref={launcherRef}
+          type="button"
+          aria-label={open ? "Close chat window" : "Open chat with DroneTV Assistant"}
+          onClick={() => {
+            if (open) {
+              handleCloseChat()
+            } else {
+              handleOpenChat()
+            }
+          }}
+          size="icon-lg"
+          className="fixed right-4 bottom-4 sm:right-6 sm:bottom-6 z-40 size-14 rounded-xl shadow-2xl bg-primary text-primary-foreground hover:bg-primary/95 transition-all duration-300 hover:scale-105 active:scale-95"
+        >
+          {open ? (
+            <XIcon className="size-6 transition-transform rotate-0 hover:rotate-90" />
+          ) : (
+            <div className="relative flex items-center justify-center">
+              <MessageCircleIcon className="size-6" />
+              {!showGreetingBubble && (
+                <span className="absolute -top-1 -right-1 flex size-3">
+                  <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex size-3 rounded-full bg-emerald-500 border-2 border-background" />
+                </span>
+              )}
+            </div>
+          )}
+        </Button>
+      )}
     </>
   )
 }

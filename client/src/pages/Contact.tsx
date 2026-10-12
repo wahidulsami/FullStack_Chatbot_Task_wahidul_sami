@@ -38,10 +38,10 @@ export default function Contact() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 sm:px-6 py-12 space-y-12">
+    <div className="mx-auto max-w-6xl px-4 sm:px-6 py-8 sm:py-12 space-y-8 sm:space-y-12">
       {/* Header with Double-Bezel Framing */}
       <div className="rounded-xl p-1.5 bg-muted/40 border border-border/80 shadow-xs">
-        <div className="rounded-[calc(1.225rem-0.375rem)] bg-card p-8 sm:p-10 border border-border/40 text-center space-y-3">
+        <div className="rounded-[calc(1.225rem-0.375rem)] bg-card p-5 sm:p-8 lg:p-10 border border-border/40 text-center space-y-3">
           <div className="inline-flex items-center gap-1.5 rounded-xl bg-primary/10 px-3.5 py-1 text-xs font-semibold text-primary">
             <MessageSquareIcon className="size-3.5" />
             Official Contact Hub
@@ -55,10 +55,10 @@ export default function Contact() {
         </div>
       </div>
 
-      {/* Grid: Contact Information Cards + Direct Enquiry Form */}
-      <div className="grid gap-8 lg:grid-cols-[1fr_1.4fr] items-start">
+      {/* Grid: Enquiry Form first on mobile, contact info first on desktop */}
+      <div className="grid gap-6 sm:gap-8 lg:grid-cols-[1fr_1.4fr] items-start">
         {/* Left Column: Contact Cards with Double-Bezel Architecture */}
-        <div className="space-y-4">
+        <div className="space-y-4 order-2 lg:order-1">
           {contactItems.map((item) => (
             <div
               key={item.label}
@@ -72,7 +72,7 @@ export default function Contact() {
                   <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                     {item.label}
                   </div>
-                  <div className="text-sm font-semibold text-foreground mt-0.5 truncate">
+                  <div className="text-sm font-semibold text-foreground mt-0.5 break-words">
                     {item.value}
                   </div>
                   <div className="text-[11px] text-muted-foreground mt-0.5">
@@ -124,8 +124,10 @@ export default function Contact() {
           </div>
         </div>
 
-        {/* Right Column: High-End Enquiry Form */}
-        <EnquiryForm />
+        {/* Right Column: High-End Enquiry Form (top on mobile) */}
+        <div className="order-1 lg:order-2">
+          <EnquiryForm />
+        </div>
       </div>
     </div>
   )

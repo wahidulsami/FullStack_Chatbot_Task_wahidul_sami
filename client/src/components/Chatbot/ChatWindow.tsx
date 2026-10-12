@@ -1,23 +1,16 @@
 import { useEffect, useRef, useState } from "react"
 import {
   BotIcon,
+  ChevronDownIcon,
   ChevronRightIcon,
+  ChevronUpIcon,
   HelpCircleIcon,
   Maximize2Icon,
   Minimize2Icon,
+  PhoneIcon,
   RotateCcwIcon,
-  SparklesIcon,
   XIcon,
 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import {
-  MessageScroller,
-  MessageScrollerButton,
-  MessageScrollerContent,
-  MessageScrollerItem,
-  MessageScrollerProvider,
-  MessageScrollerViewport,
-} from "@/components/ui/message-scroller"
 import ChatInput from "./ChatInput"
 import MessageBubble, { type ChatMessage } from "./MessageBubble"
 import TypingIndicator from "./TypingIndicator"
@@ -25,6 +18,7 @@ import { playChatChime, playMessageSentSound } from "./chatSound"
 import { QUICK_QUESTIONS, WELCOME_TEXT, getBotReply } from "@/data/chatbotData"
 
 const STORAGE_KEY = "dronetv-chat-history"
+const FORM_SUBMITTED_KEY = "dronetv-form-submitted"
 
 const uid = () =>
   typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
@@ -60,35 +54,124 @@ function loadHistory(): ChatMessage[] {
   return welcome()
 }
 
+function loadFormSubmitted(): boolean {
+  try {
+    return sessionStorage.getItem(FORM_SUBMITTED_KEY) === "true"
+  } catch {
+    return false
+  }
+}
+
 type Props = {
   onClose?: () => void
   isExpanded?: boolean
+  isMobile?: boolean
+  isCompact?: boolean
   onToggleExpand?: () => void
 }
 
-export default function ChatWindow({ onClose, isExpanded = false, onToggleExpand }: Props) {
+function QuickRow({
+  index,
+  label,
+  disabled,
+  hidden,
+  onClick,
+}: {
+  index: number
+  label: string
+  disabled?: boolean
+  hidden?: boolean
+  onClick: () => void
+}) {
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      tabIndex={hidden ? -1 : undefined}
+      onClick={onClick}
+      className="group flex min-h-[44px] w-full items-center gap-3 rounded-xl border border-gray-200/80 bg-white px-3 py-2.5 text-left text-sm text-gray-800 shadow-xs transition-all hover:bg-gray-100 hover:border-orange-500/60 hover:text-orange-600 dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-800/80 dark:hover:border-orange-500/60 dark:hover:text-orange-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 disabled:pointer-events-none disabled:opacity-50 cursor-pointer"
+    >
+      <span className="flex size-6 shrink-0 items-center justify-center rounded-full border border-gray-300 bg-gray-100 text-[12px] font-bold text-gray-700 transition-colors group-hover:border-orange-500 group-hover:bg-orange-500 group-hover:text-white dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:group-hover:border-orange-500 dark:group-hover:bg-orange-500 dark:group-hover:text-white">
+        {index + 1}
+      </span>
+      <span className="min-w-0 flex-1 break-words leading-snug whitespace-normal">
+        {label}
+      </span>
+      <ChevronRightIcon className="size-4 shrink-0 text-gray-400 dark:text-zinc-400 transition-transform group-hover:translate-x-0.5 group-hover:text-orange-500 dark:group-hover:text-orange-400" />
+    </button>
+  )
+}
+
+export default function ChatWindow({
+  onClose,
+  isExpanded = false,
+  isMobile = false,
+  isCompact = false,
+  onToggleExpand,
+}: Props) {
   const [messages, setMessages] = useState<ChatMessage[]>(loadHistory)
   const [isTyping, setIsTyping] = useState(false)
+  const [hasSubmittedForm, setHasSubmittedForm] = useState(loadFormSubmitted)
+  const [showAllQuestions, setShowAllQuestions] = useState(false)
   const [showSuggestions, setShowSuggestions] = useState(true)
-  const viewportRef = useRef<HTMLDivElement>(null)
+  const [confirmReset, setConfirmReset] = useState(false)
+  const [draftText, setDraftText] = useState("")
+  const [focusTrigger, setFocusTrigger] = useState(0)
+  const [showScrollDownBtn, setShowScrollDownBtn] = useState(false)
+
+  const messagesContainerRef = useRef<HTMLDivElement>(null)
+  const isNearBottomRef = useRef(true)
   const typingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // Persist history and scroll down smoothly on message change
+  // Full list shows once in welcome state, and afterwards ONLY under the latest bot reply
+  const lastMessage = messages[messages.length - 1]
+  const isLatestMessageBot = lastMessage && lastMessage.role === "bot"
+  const showQuickList = showSuggestions && !isTyping && isLatestMessageBot
+  const isListExpanded = isExpanded || showAllQuestions
+
+  // Scroll viewport smoothly to bottom
+  const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
+    const el = messagesContainerRef.current
+    if (!el) return
+    el.scrollTo({ top: el.scrollHeight, behavior })
+  }
+
+  // Handle scroll events to detect when user scrolls up away from the bottom
+  const handleScroll = () => {
+    const el = messagesContainerRef.current
+    if (!el) return
+    const threshold = 80
+    const isNear = el.scrollHeight - el.scrollTop - el.clientHeight <= threshold
+    isNearBottomRef.current = isNear
+    if (isNear) {
+      setShowScrollDownBtn(false)
+    } else {
+      setShowScrollDownBtn(true)
+    }
+  }
+
+  // Persist history and scroll down when new messages or typing state change
   useEffect(() => {
     try {
       sessionStorage.setItem(STORAGE_KEY, JSON.stringify(messages))
     } catch {
-      // Storage quota or private browsing
+      // Storage quota or private mode
     }
-    const vp = viewportRef.current
-    if (vp) {
-      requestAnimationFrame(() => {
-        vp.scrollTo({ top: vp.scrollHeight, behavior: "smooth" })
-      })
+
+    if (isNearBottomRef.current) {
+      requestAnimationFrame(() => scrollToBottom("smooth"))
+      setShowScrollDownBtn(false)
+    } else {
+      setShowScrollDownBtn(true)
     }
   }, [messages, isTyping])
 
-  // Cleanup pending typing timers on unmount
+  // Initial scroll on mount
+  useEffect(() => {
+    scrollToBottom("auto")
+  }, [])
+
+  // Cleanup pending timer on unmount
   useEffect(() => {
     return () => {
       if (typingTimerRef.current) clearTimeout(typingTimerRef.current)
@@ -112,7 +195,7 @@ export default function ChatWindow({ onClose, isExpanded = false, onToggleExpand
     setMessages((prev) => [...prev, userMessage])
     setIsTyping(true)
 
-    // 500ms typing indicator with bouncing dots before bot replies
+    // 500ms typing indicator before bot replies
     typingTimerRef.current = setTimeout(() => {
       const reply = getBotReply(trimmed)
       const botMessages: ChatMessage[] = [
@@ -124,7 +207,8 @@ export default function ChatWindow({ onClose, isExpanded = false, onToggleExpand
         },
       ]
 
-      if (reply.showForm) {
+      // Only show enquiry form if not already submitted in this conversation
+      if (reply.showForm && !hasSubmittedForm) {
         botMessages.push({
           id: uid(),
           role: "bot",
@@ -137,193 +221,293 @@ export default function ChatWindow({ onClose, isExpanded = false, onToggleExpand
       setMessages((prev) => [...prev, ...botMessages])
       setIsTyping(false)
       playChatChime()
+      // Autofocus back on composer input after bot reply
+      setFocusTrigger((prev) => prev + 1)
     }, 500)
   }
 
   const handleFormSuccess = (formId: string) => {
+    setHasSubmittedForm(true)
+    try {
+      sessionStorage.setItem(FORM_SUBMITTED_KEY, "true")
+    } catch {
+      // Ignore
+    }
+
     setMessages((prev) => [
       ...prev.filter((m) => m.id !== formId),
       {
         id: uid(),
         role: "bot",
-        text: "🎉 Thank you! Your enquiry has been successfully submitted. Our team will get back to you within 24 hours.",
+        type: "confirmation",
+        text: "Thank you! Your enquiry has been successfully submitted. Our team will get back to you within 24 hours.",
         timestamp: formatTime(),
       },
     ])
     playChatChime()
+    setFocusTrigger((prev) => prev + 1)
   }
 
   const reset = () => {
     if (typingTimerRef.current) clearTimeout(typingTimerRef.current)
     setIsTyping(false)
+    setHasSubmittedForm(false)
+    setConfirmReset(false)
     try {
       sessionStorage.removeItem(STORAGE_KEY)
+      sessionStorage.removeItem(FORM_SUBMITTED_KEY)
     } catch {
       // Ignore
     }
     setMessages(welcome())
+    setDraftText("")
+    setShowAllQuestions(false)
     setShowSuggestions(true)
+    setFocusTrigger((prev) => prev + 1)
   }
 
   return (
-    <div className="flex h-full w-full flex-col bg-card text-foreground select-none">
-      {/* ─── Header / Navigation Bar ───────────────────────────────── */}
-      <header className="flex h-14 shrink-0 items-center justify-between border-b border-border/80 bg-card/95 px-3.5 backdrop-blur-xs">
-        <div className="flex items-center gap-2.5 min-w-0">
-          <div className="relative flex size-8 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary shadow-2xs">
-            <BotIcon className="size-4.5" />
-            <span className="absolute -top-0.5 -right-0.5 flex size-2.5">
-              <span className="absolute inline-flex size-full animate-ping rounded-xl bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex size-2.5 rounded-xl bg-emerald-500" />
-            </span>
-          </div>
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-1.5">
-              <h2 className="truncate text-sm font-semibold tracking-tight text-foreground">
-                DroneTV Assistant
-              </h2>
-              <span className="hidden sm:inline-flex rounded-xl bg-primary/15 px-1.5 py-0.2 text-[10px] font-semibold text-primary">
-                AI Assistant
-              </span>
+    <div className="flex h-full w-full flex-col bg-card text-foreground select-none overflow-hidden">
+      {/* ─── Header (64px Height) ─────────────────────────────────── */}
+      <header className="h-16 shrink-0 border-b border-border/80 bg-card/95 backdrop-blur-xs flex items-center w-full z-10">
+        <div className="mx-auto w-full max-w-[720px] px-4 flex items-center justify-between">
+          {confirmReset ? (
+            /* Inline Reset Confirmation Bar */
+            <div className="flex w-full items-center justify-between text-xs sm:text-sm animate-bubble-in">
+              <span className="font-semibold text-foreground">Clear this conversation?</span>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={reset}
+                  className="rounded-lg bg-destructive px-3 py-1.5 text-xs font-semibold text-destructive-foreground hover:bg-destructive/90 transition-colors shadow-2xs cursor-pointer"
+                >
+                  Clear
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setConfirmReset(false)}
+                  className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
-            <p className="flex items-center gap-1 text-[11px] text-muted-foreground">
-              <span className="size-1.5 rounded-xl bg-emerald-500" />
-              Online • Instant answers
-            </p>
-          </div>
-        </div>
+          ) : (
+            <>
+              {/* Left: Avatar + Title + Online Status */}
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="relative flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary shadow-2xs">
+                  <BotIcon className="size-5" />
+                  <span className="absolute -top-0.5 -right-0.5 flex size-2.5">
+                    <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative inline-flex size-2.5 rounded-full bg-emerald-500 border border-background" />
+                  </span>
+                </div>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <h2 className="truncate text-sm sm:text-base font-semibold tracking-tight text-foreground">
+                      DroneTV Assistant
+                    </h2>
+                  </div>
+                  <p className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                    <span className="size-1.5 rounded-full bg-emerald-500" />
+                    <span>Online • Instant answers</span>
+                  </p>
+                </div>
+              </div>
 
-        <div className="flex items-center gap-1 shrink-0">
-          {/* Toggle Suggestions Button */}
-          <Button
-            variant="ghost"
-            size="icon-xs"
-            onClick={() => setShowSuggestions((prev) => !prev)}
-            title={showSuggestions ? "Hide suggested questions" : "Show suggested questions"}
-            aria-label="Toggle suggestions"
-            className="text-muted-foreground hover:text-foreground"
-          >
-            <HelpCircleIcon className="size-4" />
-          </Button>
+              {/* Right: Actions (36px Icon Buttons: rounded-lg) */}
+              <div className="flex items-center gap-1 shrink-0">
+                {/* Persistent Talk to a Human (WhatsApp / Phone) Action */}
+                <a
+                  href="https://wa.me/918882210038"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Talk to a human on WhatsApp (+91 8882210038)"
+                  title="Talk to a human (+91 8882210038)"
+                  className="flex size-9 items-center justify-center rounded-lg text-muted-foreground hover:bg-emerald-500/10 hover:text-emerald-500 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+                >
+                  <PhoneIcon className="size-4" />
+                </a>
 
-          {/* Reset History Button */}
-          <Button
-            variant="ghost"
-            size="icon-xs"
-            onClick={reset}
-            title="Reset conversation"
-            aria-label="Reset conversation"
-            className="text-muted-foreground hover:text-foreground"
-          >
-            <RotateCcwIcon className="size-4" />
-          </Button>
+                {/* Help / Toggle Suggestions Action */}
+                <button
+                  type="button"
+                  onClick={() => setShowSuggestions((prev) => !prev)}
+                  aria-label="Toggle quick questions suggestions"
+                  title="Toggle suggested questions"
+                  className="flex size-9 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+                >
+                  <HelpCircleIcon className="size-4" />
+                </button>
 
-          {/* Expand / Minimize Window Button */}
-          {onToggleExpand && (
-            <Button
-              variant="ghost"
-              size="icon-xs"
-              onClick={onToggleExpand}
-              title={isExpanded ? "Restore compact window" : "Expand all over website"}
-              aria-label={isExpanded ? "Restore window" : "Expand window"}
-              className="text-muted-foreground hover:text-foreground"
-            >
-              {isExpanded ? (
-                <Minimize2Icon className="size-4" />
-              ) : (
-                <Maximize2Icon className="size-4" />
-              )}
-            </Button>
-          )}
+                {/* New Chat (with confirmation) Action */}
+                <button
+                  type="button"
+                  onClick={() => setConfirmReset(true)}
+                  aria-label="New chat conversation"
+                  title="New chat"
+                  className="flex size-9 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+                >
+                  <RotateCcwIcon className="size-4" />
+                </button>
 
-          {/* Close Window Button */}
-          {onClose && (
-            <Button
-              variant="ghost"
-              size="icon-xs"
-              onClick={onClose}
-              title="Close chat"
-              aria-label="Close chat"
-              className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-            >
-              <XIcon className="size-4" />
-            </Button>
+                {/* Expand / Minimize Window Action (Desktop Only) */}
+                {onToggleExpand && !isMobile && (
+                  <button
+                    type="button"
+                    onClick={onToggleExpand}
+                    aria-label={isExpanded ? "Collapse dialog" : "Expand dialog"}
+                    title={isExpanded ? "Collapse dialog" : "Expand dialog"}
+                    className="flex size-9 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+                  >
+                    {isExpanded ? (
+                      <Minimize2Icon className="size-4" />
+                    ) : (
+                      <Maximize2Icon className="size-4" />
+                    )}
+                  </button>
+                )}
+
+                {/* Close Action: Hidden in compact mode (launcher is the single close control) */}
+                {onClose && !isCompact && (
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    aria-label="Close chat"
+                    title="Close chat"
+                    className="flex size-9 items-center justify-center rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+                  >
+                    <XIcon className="size-4" />
+                  </button>
+                )}
+              </div>
+            </>
           )}
         </div>
       </header>
 
-      {/* ─── Body / Message Scroller ───────────────────────────────── */}
-      <MessageScrollerProvider autoScroll>
-        <MessageScroller className="flex-1 min-h-0 bg-background/50">
-          <MessageScrollerViewport
-            ref={viewportRef}
-            className="p-3.5 sm:p-4 space-y-4"
-            role="log"
-            aria-live="polite"
-          >
-            <MessageScrollerContent className="flex flex-col gap-3.5 max-w-3xl mx-auto w-full">
-              {/* Message Rows */}
-              {messages.map((message) => (
-                <MessageScrollerItem key={message.id}>
-                  <MessageBubble message={message} onFormSuccess={handleFormSuccess} />
-                </MessageScrollerItem>
-              ))}
+      {/* ─── Messages Area (Single Scrollable Container) ───────────── */}
+      <div className="relative flex-1 min-h-0 overflow-hidden">
+        <div
+          ref={messagesContainerRef}
+          onScroll={handleScroll}
+          role="log"
+          aria-live="polite"
+          className="h-full w-full overflow-y-auto overscroll-contain px-4 pt-4 pb-6 scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent"
+        >
+          <div className="mx-auto w-full max-w-[720px] space-y-4">
+            {/* Message Bubbles */}
+            {messages.map((message) => (
+              <MessageBubble
+                key={message.id}
+                message={message}
+                onFormSuccess={handleFormSuccess}
+                isExpanded={isExpanded}
+              />
+            ))}
 
-              {/* Typing indicator (0.5s duration) */}
-              {isTyping && (
-                <MessageScrollerItem>
-                  <TypingIndicator />
-                </MessageScrollerItem>
-              )}
+            {/* Typing Indicator */}
+            {isTyping && <TypingIndicator />}
 
-              {/* ─── Vertical Suggestions (7 Quick Questions) ────────── */}
-              {showSuggestions && (
-                <MessageScrollerItem>
-                  <div className="mt-2 rounded-xl border border-border/80 bg-card p-3 shadow-xs animate-bubble-in">
-                    <div className="flex items-center justify-between pb-2 mb-2 border-b border-border/50">
-                      <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
-                        <SparklesIcon className="size-3.5 text-primary" />
-                        <span>Quick Questions ({QUICK_QUESTIONS.length})</span>
+            {/* ─── Vertical Quick Questions: only under the latest bot reply ─── */}
+            {showQuickList && (
+              <div className="rounded-xl bg-gray-50 border border-gray-200 dark:bg-zinc-800/80 dark:border-zinc-700 p-3 animate-bubble-in">
+                <div className="mb-2 flex items-center justify-between gap-2 text-[12px] text-gray-500 dark:text-zinc-400">
+                  <span className="font-semibold text-gray-800 dark:text-zinc-200">
+                    Quick Questions ({QUICK_QUESTIONS.length})
+                  </span>
+                  <span>Click to send instantly</span>
+                </div>
+
+                <div className="space-y-2">
+                  {QUICK_QUESTIONS.slice(0, 4).map((question, index) => (
+                    <QuickRow
+                      key={question}
+                      index={index}
+                      label={question}
+                      disabled={isTyping}
+                      onClick={() => send(question)}
+                    />
+                  ))}
+
+                  {/* Remaining rows expand inline with smooth height transition */}
+                  <div
+                    className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out motion-reduce:transition-none ${
+                      isListExpanded ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                    }`}
+                    aria-hidden={!isListExpanded}
+                  >
+                    <div className="overflow-hidden">
+                      <div className="space-y-2 pt-2">
+                        {QUICK_QUESTIONS.slice(4).map((question, i) => (
+                          <QuickRow
+                            key={question}
+                            index={i + 4}
+                            label={question}
+                            disabled={isTyping}
+                            hidden={!isListExpanded}
+                            onClick={() => send(question)}
+                          />
+                        ))}
                       </div>
-                      <span className="text-[10px] text-muted-foreground">
-                        Click to send instantly
-                      </span>
-                    </div>
-
-                    {/* Vertically stacked question buttons with clean design */}
-                    <div className="flex flex-col gap-1.5">
-                      {QUICK_QUESTIONS.map((question, index) => (
-                        <button
-                          key={question}
-                          type="button"
-                          disabled={isTyping}
-                          onClick={() => send(question)}
-                          className="group flex w-full items-center justify-between gap-2.5 rounded-xl border border-border/60 bg-muted/40 px-3 py-2 text-left text-xs font-medium text-foreground transition-all hover:border-primary/60 hover:bg-primary/5 hover:text-primary active:scale-[0.99] disabled:pointer-events-none disabled:opacity-50"
-                        >
-                          <div className="flex items-center gap-2.5 min-w-0">
-                            <span className="flex size-5 shrink-0 items-center justify-center rounded-xl bg-background text-[11px] font-bold text-muted-foreground group-hover:bg-primary group-hover:text-primary-foreground border border-border transition-colors">
-                              {index + 1}
-                            </span>
-                            <span className="truncate">{question}</span>
-                          </div>
-                          <ChevronRightIcon className="size-3.5 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
-                        </button>
-                      ))}
                     </div>
                   </div>
-                </MessageScrollerItem>
-              )}
-            </MessageScrollerContent>
-          </MessageScrollerViewport>
-          <MessageScrollerButton
-            direction="end"
-            className="left-auto right-4 inset-s-auto translate-x-0 bottom-2.5 shadow-md z-20"
-          />
-        </MessageScroller>
-      </MessageScrollerProvider>
 
-      {/* ─── Footer / Chat Input ───────────────────────────────────── */}
-      <ChatInput onSend={send} disabled={isTyping} />
+                  {!isExpanded && !showAllQuestions && QUICK_QUESTIONS.length > 4 && (
+                    <button
+                      type="button"
+                      onClick={() => setShowAllQuestions(true)}
+                      className="group flex min-h-[44px] w-full items-center justify-between gap-3 rounded-xl border border-gray-200/80 bg-white px-3.5 py-2.5 text-left text-sm text-gray-800 shadow-xs transition-all hover:bg-gray-100 hover:border-orange-500/60 hover:text-orange-600 dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-800/80 dark:hover:border-orange-500/60 dark:hover:text-orange-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 cursor-pointer"
+                    >
+                      <span className="font-medium text-gray-700 dark:text-zinc-200 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                        Show {QUICK_QUESTIONS.length - 4} more questions
+                      </span>
+                      <ChevronDownIcon className="size-4 text-gray-400 dark:text-zinc-400 group-hover:text-orange-500 dark:group-hover:text-orange-400 transition-transform group-hover:translate-y-0.5" />
+                    </button>
+                  )}
+
+                  {!isExpanded && showAllQuestions && QUICK_QUESTIONS.length > 4 && (
+                    <button
+                      type="button"
+                      onClick={() => setShowAllQuestions(false)}
+                      className="group flex min-h-[36px] w-full items-center justify-center gap-1.5 rounded-xl border border-gray-200/80 bg-gray-100/80 px-3 py-1.5 text-xs text-gray-600 hover:text-gray-900 hover:bg-gray-200 dark:border-zinc-800/80 dark:bg-zinc-900/60 dark:text-zinc-400 dark:hover:text-zinc-200 transition-colors cursor-pointer"
+                    >
+                      <span>Show fewer questions</span>
+                      <ChevronUpIcon className="size-3.5" />
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Floating circular scroll-to-bottom button */}
+        {showScrollDownBtn && (
+          <button
+            type="button"
+            onClick={() => {
+              scrollToBottom("smooth")
+              setShowScrollDownBtn(false)
+            }}
+            className="absolute right-6 bottom-4 z-20 flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground dark:text-zinc-950 shadow-lg hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all cursor-pointer border border-border/20 animate-bubble-in focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+            aria-label="Scroll to bottom"
+            title="Scroll to bottom"
+          >
+            <ChevronDownIcon className="size-5 stroke-[2.5]" />
+          </button>
+        )}
+      </div>
+
+      {/* ─── Fixed Composer (Input) ─────────────────────────────────── */}
+      <ChatInput
+        onSend={send}
+        disabled={isTyping}
+        value={draftText}
+        onChange={setDraftText}
+        focusTrigger={focusTrigger}
+      />
     </div>
   )
 }
