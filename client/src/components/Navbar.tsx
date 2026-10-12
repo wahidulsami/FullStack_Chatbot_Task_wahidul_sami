@@ -32,33 +32,35 @@ export default function Navbar() {
   }
 
   return (
-    <header className="sticky top-4 z-40 w-full px-4 sm:px-6">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 rounded-xl border border-border/80 bg-card/85 px-4 sm:px-6 shadow-sm backdrop-blur-xl transition-all">
-        {/* Brand Logo */}
-        <Link
-          to="/"
-          onClick={() => setMobileMenuOpen(false)}
-          className="group flex items-center gap-2.5 font-heading text-sm sm:text-base font-bold tracking-tight text-foreground transition-opacity hover:opacity-90"
-        >
-          <span className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-xs transition-transform group-hover:scale-105">
-            <PlaneTakeoffIcon className="size-4.5 stroke-[2.2]" />
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span>DroneTV</span>
-            <span className="text-muted-foreground font-medium hidden xs:inline">.in</span>
-            <span className="size-1.5 rounded-xl bg-primary" />
-          </span>
-        </Link>
+    <header className="sticky top-4 z-50 w-full px-4">
+      <div className="mx-auto grid h-16 max-w-[1180px] grid-cols-[auto_1fr] md:grid-cols-[1fr_auto_1fr] items-center gap-3 rounded-xl border border-border/80 bg-card/85 px-4 sm:px-6 shadow-sm backdrop-blur-xl transition-all">
+        {/* Zone 1: Brand Logo (Left) */}
+        <div className="flex items-center justify-start">
+          <Link
+            to="/"
+            onClick={() => setMobileMenuOpen(false)}
+            className="group flex items-center gap-2.5 font-heading text-sm sm:text-base font-bold tracking-tight text-foreground transition-opacity hover:opacity-90"
+          >
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-xs transition-transform group-hover:scale-105">
+              <PlaneTakeoffIcon className="size-4.5 stroke-[2.2]" />
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span>DroneTV</span>
+              <span className="text-muted-foreground font-medium hidden xs:inline">.in</span>
+              <span className="size-1.5 rounded-full bg-primary" />
+            </span>
+          </Link>
+        </div>
 
-        {/* Desktop Navigation Links */}
-        <nav className="hidden md:flex items-center gap-1 bg-muted/40 p-1 rounded-xl border border-border/50">
+        {/* Zone 2: Navigation Links (Truly Centered) */}
+        <nav className="hidden md:flex items-center justify-center gap-1 bg-muted/40 p-1 rounded-xl border border-border/50">
           {links.map((link) => (
             <NavLink
               key={link.to}
               to={link.to}
               end={link.to === "/"}
               className={({ isActive }) =>
-                `rounded-xl px-3.5 py-1.5 text-xs font-medium transition-all ${
+                `rounded-xl px-3.5 py-1.5 text-xs sm:text-sm font-medium transition-all ${
                   isActive
                     ? "bg-background text-foreground shadow-2xs font-semibold"
                     : "text-muted-foreground hover:text-foreground hover:bg-background/50"
@@ -70,59 +72,62 @@ export default function Navbar() {
           ))}
         </nav>
 
-        {/* Desktop Actions & Admin */}
-        <div className="hidden md:flex items-center gap-2">
+        {/* Zone 3: Actions & Admin (Right) */}
+        <div className="flex items-center justify-end gap-2">
           <ThemeToggle />
-          {status === "authenticated" && user ? (
-            <>
-              <Button
-                render={<Link to="/admin" />}
-                size="sm"
-                className="rounded-xl bg-primary text-primary-foreground font-medium hover:bg-primary/90 text-xs px-3.5"
-              >
-                <LayoutDashboardIcon className="size-3.5 mr-1" />
-                Dashboard
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon-xs"
-                onClick={() => void handleLogout()}
-                title="Logout"
-                aria-label="Logout"
-                className="rounded-xl text-muted-foreground hover:text-destructive"
-              >
-                <LogOutIcon className="size-4" />
-              </Button>
-            </>
-          ) : (
-            <Button
-              render={<Link to="/admin/login" />}
-              size="sm"
-              className="rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 text-xs px-4 py-1.5 shadow-xs transition-all active:scale-[0.98]"
-            >
-              Admin Login
-            </Button>
-          )}
-        </div>
 
-        {/* Mobile & Tablet Toggle Button */}
-        <div className="flex md:hidden items-center gap-1.5">
-          <ThemeToggle />
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            onClick={() => setMobileMenuOpen((v) => !v)}
-            aria-label="Toggle navigation menu"
-            className="rounded-xl text-foreground hover:bg-muted"
-          >
-            {mobileMenuOpen ? <XIcon className="size-5" /> : <MenuIcon className="size-5" />}
-          </Button>
+          {/* Desktop Auth Controls */}
+          <div className="hidden md:flex items-center gap-2">
+            {status === "authenticated" && user ? (
+              <>
+                <Button
+                  render={<Link to="/admin" />}
+                  size="sm"
+                  className="rounded-xl bg-primary text-primary-foreground font-medium hover:bg-primary/90 text-xs px-3.5"
+                >
+                  <LayoutDashboardIcon className="size-3.5 mr-1" />
+                  Dashboard
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon-xs"
+                  onClick={() => void handleLogout()}
+                  title="Logout"
+                  aria-label="Logout"
+                  className="rounded-xl text-muted-foreground hover:text-destructive"
+                >
+                  <LogOutIcon className="size-4" />
+                </Button>
+              </>
+            ) : (
+              <Button
+                render={<Link to="/admin/login" />}
+                size="sm"
+                className="rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 text-xs px-4 py-1.5 shadow-xs transition-all active:scale-[0.98]"
+              >
+                Admin Login
+              </Button>
+            )}
+          </div>
+
+          {/* Mobile & Tablet Hamburger Toggle Button */}
+          <div className="flex md:hidden items-center">
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => setMobileMenuOpen((v) => !v)}
+              aria-label="Toggle navigation menu"
+              className="rounded-xl text-foreground hover:bg-muted"
+            >
+              {mobileMenuOpen ? <XIcon className="size-5" /> : <MenuIcon className="size-5" />}
+            </Button>
+          </div>
         </div>
       </div>
 
       {/* Mobile & Tablet Dropdown Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden mt-2 mx-auto max-w-6xl rounded-xl p-1.5 bg-muted/40 border border-border shadow-2xl backdrop-blur-xl animate-bubble-in">
+        <div className="md:hidden mt-2 mx-auto max-w-[1000px]  rounded-xl p-1.5 bg-muted/40 border border-border shadow-2xl backdrop-blur-xl animate-bubble-in">
           <div className="rounded-[calc(1.225rem-0.375rem)] bg-card border border-border/40 p-4 space-y-3">
             <nav className="flex flex-col gap-1">
               {links.map((link) => (

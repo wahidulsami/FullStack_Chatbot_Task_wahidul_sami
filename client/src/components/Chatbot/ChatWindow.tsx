@@ -72,7 +72,6 @@ export default function ChatWindow({ onClose, isExpanded = false, onToggleExpand
   const [showSuggestions, setShowSuggestions] = useState(true)
   const viewportRef = useRef<HTMLDivElement>(null)
   const typingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const streamIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   // Persist history and scroll down smoothly on message change
   useEffect(() => {
@@ -83,15 +82,16 @@ export default function ChatWindow({ onClose, isExpanded = false, onToggleExpand
     }
     const vp = viewportRef.current
     if (vp) {
-      vp.scrollTo({ top: vp.scrollHeight, behavior: "smooth" })
+      requestAnimationFrame(() => {
+        vp.scrollTo({ top: vp.scrollHeight, behavior: "smooth" })
+      })
     }
   }, [messages, isTyping])
 
-  // Cleanup pending typing timers and streaming intervals on unmount
+  // Cleanup pending typing timers on unmount
   useEffect(() => {
     return () => {
       if (typingTimerRef.current) clearTimeout(typingTimerRef.current)
-      if (streamIntervalRef.current) clearInterval(streamIntervalRef.current)
     }
   }, [])
 
@@ -112,58 +112,32 @@ export default function ChatWindow({ onClose, isExpanded = false, onToggleExpand
     setMessages((prev) => [...prev, userMessage])
     setIsTyping(true)
 
-    // Initial AI thinking delay (350ms), then stream words out like real AI
+    // 500ms typing indicator with bouncing dots before bot replies
     typingTimerRef.current = setTimeout(() => {
       const reply = getBotReply(trimmed)
-      const botMsgId = uid()
-      const botTime = formatTime()
-      const words = reply.text.split(" ")
-      let currentWordIndex = 0
-
-      // Seed initial bot message
-      setMessages((prev) => [
-        ...prev,
+      const botMessages: ChatMessage[] = [
         {
-          id: botMsgId,
+          id: uid(),
           role: "bot",
-          text: words[0] || "",
-          timestamp: botTime,
+          text: reply.text,
+          timestamp: formatTime(),
         },
-      ])
+      ]
 
-      // Stream remaining words at rapid AI typing pace (20ms)
-      streamIntervalRef.current = setInterval(() => {
-        currentWordIndex += 2
-        if (currentWordIndex >= words.length) {
-          if (streamIntervalRef.current) clearInterval(streamIntervalRef.current)
-          setMessages((prev) =>
-            prev.map((m) => (m.id === botMsgId ? { ...m, text: reply.text } : m))
-          )
+      if (reply.showForm) {
+        botMessages.push({
+          id: uid(),
+          role: "bot",
+          type: "form",
+          defaultUserType: reply.defaultUserType,
+          timestamp: formatTime(),
+        })
+      }
 
-          // If form is needed, reveal full-width enquiry card below
-          if (reply.showForm) {
-            setMessages((prev) => [
-              ...prev,
-              {
-                id: uid(),
-                role: "bot",
-                type: "form",
-                defaultUserType: reply.defaultUserType,
-                timestamp: formatTime(),
-              },
-            ])
-          }
-
-          setIsTyping(false)
-          playChatChime()
-        } else {
-          const partialText = words.slice(0, currentWordIndex).join(" ")
-          setMessages((prev) =>
-            prev.map((m) => (m.id === botMsgId ? { ...m, text: partialText } : m))
-          )
-        }
-      }, 20)
-    }, 350)
+      setMessages((prev) => [...prev, ...botMessages])
+      setIsTyping(false)
+      playChatChime()
+    }, 500)
   }
 
   const handleFormSuccess = (formId: string) => {
@@ -181,7 +155,6 @@ export default function ChatWindow({ onClose, isExpanded = false, onToggleExpand
 
   const reset = () => {
     if (typingTimerRef.current) clearTimeout(typingTimerRef.current)
-    if (streamIntervalRef.current) clearInterval(streamIntervalRef.current)
     setIsTyping(false)
     try {
       sessionStorage.removeItem(STORAGE_KEY)

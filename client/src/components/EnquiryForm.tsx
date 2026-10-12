@@ -21,7 +21,7 @@ import { useAppDispatch } from "@/store/hooks"
 import { submitEnquiry } from "@/store/enquiriesSlice"
 import { enquirySchema, type EnquiryFormValues } from "@/validation/schemas"
 
-const MESSAGE_MAX = 5000
+const MESSAGE_MAX = 2000
 
 type EnquiryFormProps = {
   compact?: boolean
@@ -237,7 +237,7 @@ export default function EnquiryForm({
               rows={compact ? 3 : 5}
               placeholder="Tell us what you are looking for..."
               aria-invalid={!!errors.message}
-              className="w-full rounded-xl border-border bg-background p-3 text-xs sm:text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 leading-relaxed"
+              className="w-full h-10 sm:h-30 rounded-xl border-border bg-background p-3 text-xs sm:text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 leading-relaxed"
               {...register("message")}
             />
             <div className="flex items-center justify-between text-[11px] text-muted-foreground pt-1">
@@ -253,6 +253,8 @@ export default function EnquiryForm({
         {/* Vibrant Yellow CTA Button */}
         <div className="pt-2">
           <Button
+
+
             type="submit"
             disabled={isSubmitting}
             className={cn(
