@@ -73,7 +73,11 @@ export default function EnquiryForm({
   const messageRegister = register("message")
 
   const handleMessageChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    const value = event.target.value
+    let value = event.target.value
+    if (value.length > 2000) {
+      value = value.slice(0, 2000)
+      event.target.value = value
+    }
     if (countWords(value) > MESSAGE_MAX_WORDS) {
       event.target.value = value
         .trim()
@@ -177,6 +181,7 @@ export default function EnquiryForm({
             </FieldLabel>
             <Input
               id={fieldId("name")}
+              maxLength={100}
               placeholder="e.g. Alex Vance"
               aria-invalid={!!errors.name}
               className="h-11 min-h-[44px] w-full rounded-xl border-border bg-background px-3 text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
@@ -192,6 +197,7 @@ export default function EnquiryForm({
             <Input
               id={fieldId("email")}
               type="email"
+              maxLength={100}
               placeholder="alex@example.com"
               aria-invalid={!!errors.email}
               className="h-11 min-h-[44px] w-full rounded-xl border-border bg-background px-3 text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
@@ -207,6 +213,7 @@ export default function EnquiryForm({
             <Input
               id={fieldId("phone")}
               type="tel"
+              maxLength={20}
               placeholder="+91 98765 43210"
               aria-invalid={!!errors.phone}
               className="h-11 min-h-[44px] w-full rounded-xl border-border bg-background px-3 text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
@@ -246,6 +253,7 @@ export default function EnquiryForm({
             </FieldLabel>
             <Input
               id={fieldId("interest")}
+              maxLength={150}
               placeholder="e.g. Drone Expo Media, Drone Doctor Support, RPTO Pilot Training, or GIS Mapping"
               aria-invalid={!!errors.interest}
               className="h-11 min-h-[44px] w-full rounded-xl border-border bg-background px-3 text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
@@ -261,6 +269,7 @@ export default function EnquiryForm({
             <Textarea
               id={fieldId("message")}
               rows={compact ? 3 : 5}
+              maxLength={2000}
               placeholder="Tell us what you are looking for..."
               aria-invalid={!!errors.message}
               className="w-full min-h-28 sm:min-h-0 sm:h-30 rounded-xl border-border bg-background p-3 text-xs sm:text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 leading-relaxed"
@@ -271,10 +280,11 @@ export default function EnquiryForm({
               <span>Min 5 characters</span>
               <span
                 className={cn(
-                  messageWords >= MESSAGE_MAX_WORDS && "text-destructive font-bold",
+                  ((messageValue?.length || 0) >= 2000 || messageWords >= MESSAGE_MAX_WORDS) &&
+                    "text-destructive font-bold",
                 )}
               >
-                {messageWords} / {MESSAGE_MAX_WORDS} words
+                {messageValue?.length || 0} / 2000 characters
               </span>
             </div>
             <FieldError errors={[errors.message]} />
@@ -314,6 +324,9 @@ export default function EnquiryForm({
 
   if (compact) {
     return <div className="w-full p-1 sm:p-2">{formBody}</div>
+
+
+    
   }
 
   return (

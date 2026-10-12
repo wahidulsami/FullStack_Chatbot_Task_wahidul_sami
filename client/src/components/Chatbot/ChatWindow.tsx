@@ -299,8 +299,7 @@ export default function ChatWindow({
                 <div className="relative flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary shadow-2xs">
                   <BotIcon className="size-5" />
                   <span className="absolute -top-0.5 -right-0.5 flex size-2.5">
-                    <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                    <span className="relative inline-flex size-2.5 rounded-full bg-emerald-500 border border-background" />
+
                   </span>
                 </div>
                 <div className="min-w-0">
@@ -319,18 +318,7 @@ export default function ChatWindow({
               {/* Right: Actions (36px Icon Buttons: rounded-lg) */}
               <div className="flex items-center gap-1 shrink-0">
                 {/* Persistent Talk to a Human (WhatsApp / Phone) Action */}
-                <a
-                  href="https://wa.me/918882210038"
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label="Talk to a human on WhatsApp (+91 8882210038)"
-                  title="Talk to a human (+91 8882210038)"
-                  className="flex size-9 items-center justify-center rounded-lg text-muted-foreground hover:bg-emerald-500/10 hover:text-emerald-500 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
-                >
-                  <PhoneIcon className="size-4" />
-                </a>
-
-                {/* Help / Toggle Suggestions Action */}
+              
                 <button
                   type="button"
                   onClick={() => setShowSuggestions((prev) => !prev)}

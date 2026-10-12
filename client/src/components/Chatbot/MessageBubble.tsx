@@ -14,7 +14,7 @@ type Props = {
 }
 
 export default function MessageBubble({ message, onFormSuccess, isExpanded = false }: Props) {
-  // ─── Bot Enquiry Form Message Card ──────────────────────────────
+
   if ("type" in message && message.type === "form") {
     return (
       <div className="w-full min-w-0 animate-bubble-in">

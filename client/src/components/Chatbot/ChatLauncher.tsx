@@ -244,8 +244,7 @@ export default function ChatLauncher() {
               <MessageCircleIcon className="size-6" />
               {!showGreetingBubble && (
                 <span className="absolute -top-1 -right-1 flex size-3">
-                  <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                  <span className="relative inline-flex size-3 rounded-full bg-emerald-500 border-2 border-background" />
+           
                 </span>
               )}
             </div>

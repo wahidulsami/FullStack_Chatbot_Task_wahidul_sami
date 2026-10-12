@@ -123,7 +123,8 @@ export default function HeroSection() {
 
               <Button
                 onClick={triggerChat}
-                className="w-full rounded-xl bg-primary py-2.5 text-xs font-semibold text-primary-foreground shadow-xs transition-all hover:bg-primary/90 sm:text-sm"
+                className="w-full rounded-xl bg-primary py-2.5 text-xs font-semibold text-primary-foreground shadow-xs 
+                transition-all hover:bg-primary/90 sm:text-sm"
               >
                 <BotIcon className="mr-1.5 size-4" />
                 <span>Connect with DroneTV Team</span>

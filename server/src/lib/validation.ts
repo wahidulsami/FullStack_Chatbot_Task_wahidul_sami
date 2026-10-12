@@ -35,7 +35,7 @@ export const createEnquirySchema = z.object({
     .string()
     .trim()
     .min(5, "Message is too short")
-    .max(40000, "Message is too long")
+    .max(2000, "Message cannot exceed 2000 characters")
     .refine(
       (value) => countWords(value) <= MESSAGE_MAX_WORDS,
       `Message is too long (max ${MESSAGE_MAX_WORDS} words)`,
