@@ -72,6 +72,7 @@ export default function ChatWindow({ onClose, isExpanded = false, onToggleExpand
   const [showSuggestions, setShowSuggestions] = useState(true)
   const viewportRef = useRef<HTMLDivElement>(null)
   const typingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const streamIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   // Persist history and scroll down smoothly on message change
   useEffect(() => {
@@ -86,10 +87,11 @@ export default function ChatWindow({ onClose, isExpanded = false, onToggleExpand
     }
   }, [messages, isTyping])
 
-  // Cleanup pending typing timers on unmount
+  // Cleanup pending typing timers and streaming intervals on unmount
   useEffect(() => {
     return () => {
       if (typingTimerRef.current) clearTimeout(typingTimerRef.current)
+      if (streamIntervalRef.current) clearInterval(streamIntervalRef.current)
     }
   }, [])
 
@@ -110,32 +112,58 @@ export default function ChatWindow({ onClose, isExpanded = false, onToggleExpand
     setMessages((prev) => [...prev, userMessage])
     setIsTyping(true)
 
-    // 0.5s (500ms) typing effect before revealing the bot's response
+    // Initial AI thinking delay (350ms), then stream words out like real AI
     typingTimerRef.current = setTimeout(() => {
       const reply = getBotReply(trimmed)
-      const botMessages: ChatMessage[] = [
+      const botMsgId = uid()
+      const botTime = formatTime()
+      const words = reply.text.split(" ")
+      let currentWordIndex = 0
+
+      // Seed initial bot message
+      setMessages((prev) => [
+        ...prev,
         {
-          id: uid(),
+          id: botMsgId,
           role: "bot",
-          text: reply.text,
-          timestamp: formatTime(),
+          text: words[0] || "",
+          timestamp: botTime,
         },
-      ]
+      ])
 
-      if (reply.showForm) {
-        botMessages.push({
-          id: uid(),
-          role: "bot",
-          type: "form",
-          defaultUserType: reply.defaultUserType,
-          timestamp: formatTime(),
-        })
-      }
+      // Stream remaining words at rapid AI typing pace (20ms)
+      streamIntervalRef.current = setInterval(() => {
+        currentWordIndex += 2
+        if (currentWordIndex >= words.length) {
+          if (streamIntervalRef.current) clearInterval(streamIntervalRef.current)
+          setMessages((prev) =>
+            prev.map((m) => (m.id === botMsgId ? { ...m, text: reply.text } : m))
+          )
 
-      setMessages((prev) => [...prev, botMessages[0], ...(botMessages[1] ? [botMessages[1]] : [])])
-      setIsTyping(false)
-      playChatChime()
-    }, 500)
+          // If form is needed, reveal full-width enquiry card below
+          if (reply.showForm) {
+            setMessages((prev) => [
+              ...prev,
+              {
+                id: uid(),
+                role: "bot",
+                type: "form",
+                defaultUserType: reply.defaultUserType,
+                timestamp: formatTime(),
+              },
+            ])
+          }
+
+          setIsTyping(false)
+          playChatChime()
+        } else {
+          const partialText = words.slice(0, currentWordIndex).join(" ")
+          setMessages((prev) =>
+            prev.map((m) => (m.id === botMsgId ? { ...m, text: partialText } : m))
+          )
+        }
+      }, 20)
+    }, 350)
   }
 
   const handleFormSuccess = (formId: string) => {
@@ -153,6 +181,7 @@ export default function ChatWindow({ onClose, isExpanded = false, onToggleExpand
 
   const reset = () => {
     if (typingTimerRef.current) clearTimeout(typingTimerRef.current)
+    if (streamIntervalRef.current) clearInterval(streamIntervalRef.current)
     setIsTyping(false)
     try {
       sessionStorage.removeItem(STORAGE_KEY)
@@ -313,7 +342,10 @@ export default function ChatWindow({ onClose, isExpanded = false, onToggleExpand
               )}
             </MessageScrollerContent>
           </MessageScrollerViewport>
-          <MessageScrollerButton direction="end" />
+          <MessageScrollerButton
+            direction="end"
+            className="left-auto right-4 inset-s-auto translate-x-0 bottom-2.5 shadow-md z-20"
+          />
         </MessageScroller>
       </MessageScrollerProvider>
 

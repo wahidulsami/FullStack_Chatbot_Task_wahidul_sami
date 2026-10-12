@@ -20,27 +20,34 @@ const enter = "animate-bubble-in motion-reduce:animate-none"
 export default function MessageBubble({ message, onFormSuccess }: Props) {
   if ("type" in message && message.type === "form") {
     return (
-      <Message align="start" className={enter}>
-        <MessageAvatar className={botAvatarClass}>
-          <BotIcon className="size-4" />
-        </MessageAvatar>
-        <MessageContent className="max-w-[480px]">
-          <Bubble variant="outline" className="w-full rounded-xl border-border bg-card shadow-xs">
-            <BubbleContent className="w-full bg-transparent p-0">
-              <EnquiryForm
-                compact
-                defaultUserType={message.defaultUserType}
-                onSuccess={() => onFormSuccess(message.id)}
-              />
-            </BubbleContent>
-          </Bubble>
-          {message.timestamp && (
-            <MessageFooter className="text-[10px] text-muted-foreground/70">
-              {message.timestamp}
-            </MessageFooter>
-          )}
-        </MessageContent>
-      </Message>
+      <div className={`w-full min-w-0 ${enter}`}>
+        <div className="w-full rounded-xl border border-border/80 bg-card p-3 sm:p-4 shadow-sm ring-1 ring-border/20">
+          <div className="mb-3 flex items-center justify-between border-b border-border/60 pb-2.5">
+            <div className="flex items-center gap-2">
+              <span className="flex size-7 shrink-0 items-center justify-center rounded-xl bg-primary/20 text-primary">
+                <BotIcon className="size-4" />
+              </span>
+              <div>
+                <h4 className="text-xs font-bold text-foreground">Official DroneTV Direct Enquiry</h4>
+                <p className="text-[10px] text-muted-foreground">Direct connection to admissions & enterprise team</p>
+              </div>
+            </div>
+            <span className="rounded-xl bg-primary/15 px-2 py-0.5 text-[10px] font-semibold text-primary">
+              Lead Form
+            </span>
+          </div>
+          <EnquiryForm
+            compact
+            defaultUserType={message.defaultUserType}
+            onSuccess={() => onFormSuccess(message.id)}
+          />
+        </div>
+        {message.timestamp && (
+          <div className="mt-1 px-1 text-right text-[10px] text-muted-foreground/70">
+            {message.timestamp}
+          </div>
+        )}
+      </div>
     )
   }
 

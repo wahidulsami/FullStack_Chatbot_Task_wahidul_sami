@@ -74,7 +74,7 @@ export default function ChatLauncher() {
           className={`fixed z-50 flex flex-col overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] ${
             isExpanded
               ? "inset-2 sm:inset-4 md:inset-6 lg:inset-8 rounded-xl p-1.5 sm:p-2 bg-muted/40 border border-border shadow-2xl backdrop-blur-md"
-              : "inset-x-3 bottom-20 top-16 sm:top-auto sm:inset-auto sm:right-6 sm:bottom-24 sm:h-[630px] sm:w-[420px] rounded-xl p-1.5 bg-muted/40 border border-border shadow-2xl backdrop-blur-md"
+              : "inset-x-3 bottom-20 top-16 sm:top-auto sm:inset-auto sm:right-6 sm:bottom-24 sm:h-[650px] sm:w-[460px] rounded-xl p-1.5 bg-muted/40 border border-border shadow-2xl backdrop-blur-md"
           }`}
         >
           <div className="size-full overflow-hidden rounded-[calc(1.225rem-0.375rem)] bg-card border border-border/40 shadow-xs flex flex-col">

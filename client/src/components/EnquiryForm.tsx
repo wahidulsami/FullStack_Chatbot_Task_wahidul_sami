@@ -144,7 +144,7 @@ export default function EnquiryForm({
           </Alert>
         )}
 
-        <div className={cn("grid gap-4 sm:grid-cols-2", compact && "grid-cols-1 gap-2.5")}>
+        <div className={cn(compact ? "grid grid-cols-1 gap-3" : "grid grid-cols-1 sm:grid-cols-2 gap-4")}>
           <Field data-invalid={!!errors.name} className="space-y-1">
             <FieldLabel htmlFor={fieldId("name")} className="text-xs font-semibold text-foreground">
               Full Name
@@ -153,7 +153,7 @@ export default function EnquiryForm({
               id={fieldId("name")}
               placeholder="e.g. Alex Vance"
               aria-invalid={!!errors.name}
-              className="h-10 rounded-xl border-border bg-background px-3 text-xs sm:text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+              className="h-10 w-full rounded-xl border-border bg-background px-3 text-xs sm:text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
               {...register("name")}
             />
             <FieldError errors={[errors.name]} />
@@ -168,7 +168,7 @@ export default function EnquiryForm({
               type="email"
               placeholder="alex@example.com"
               aria-invalid={!!errors.email}
-              className="h-10 rounded-xl border-border bg-background px-3 text-xs sm:text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+              className="h-10 w-full rounded-xl border-border bg-background px-3 text-xs sm:text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
               {...register("email")}
             />
             <FieldError errors={[errors.email]} />
@@ -183,7 +183,7 @@ export default function EnquiryForm({
               type="tel"
               placeholder="+91 98765 43210"
               aria-invalid={!!errors.phone}
-              className="h-10 rounded-xl border-border bg-background px-3 text-xs sm:text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+              className="h-10 w-full rounded-xl border-border bg-background px-3 text-xs sm:text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
               {...register("phone")}
             />
             <FieldError errors={[errors.phone]} />
@@ -214,7 +214,7 @@ export default function EnquiryForm({
             <FieldError errors={[errors.userType]} />
           </Field>
 
-          <Field className="sm:col-span-2 space-y-1" data-invalid={!!errors.interest}>
+          <Field className={cn(!compact && "sm:col-span-2", "space-y-1")} data-invalid={!!errors.interest}>
             <FieldLabel htmlFor={fieldId("interest")} className="text-xs font-semibold text-foreground">
               Topic or Service of Interest
             </FieldLabel>
@@ -222,13 +222,13 @@ export default function EnquiryForm({
               id={fieldId("interest")}
               placeholder="e.g. Drone Expo Media, Drone Doctor Support, RPTO Pilot Training, or GIS Mapping"
               aria-invalid={!!errors.interest}
-              className="h-10 rounded-xl border-border bg-background px-3 text-xs sm:text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+              className="h-10 w-full rounded-xl border-border bg-background px-3 text-xs sm:text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
               {...register("interest")}
             />
             <FieldError errors={[errors.interest]} />
           </Field>
 
-          <Field className="sm:col-span-2 space-y-1" data-invalid={!!errors.message}>
+          <Field className={cn(!compact && "sm:col-span-2", "space-y-1")} data-invalid={!!errors.message}>
             <FieldLabel htmlFor={fieldId("message")} className="text-xs font-semibold text-foreground">
               Message / Inquiries
             </FieldLabel>
@@ -237,7 +237,7 @@ export default function EnquiryForm({
               rows={compact ? 3 : 5}
               placeholder="Tell us what you are looking for..."
               aria-invalid={!!errors.message}
-              className="rounded-xl border-border bg-background p-3 text-xs sm:text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 leading-relaxed"
+              className="w-full rounded-xl border-border bg-background p-3 text-xs sm:text-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 leading-relaxed"
               {...register("message")}
             />
             <div className="flex items-center justify-between text-[11px] text-muted-foreground pt-1">
@@ -256,8 +256,8 @@ export default function EnquiryForm({
             type="submit"
             disabled={isSubmitting}
             className={cn(
-              "group rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 shadow-sm transition-all duration-300 active:scale-[0.98] inline-flex items-center justify-center gap-2",
-              compact ? "w-full text-xs h-9" : "w-full sm:w-auto px-6 py-3 text-xs sm:text-sm h-11"
+              "group w-full rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 shadow-sm transition-all duration-300 active:scale-[0.98] inline-flex items-center justify-center gap-2 h-10 text-xs sm:text-sm",
+              !compact && "sm:w-auto px-6 py-3 h-11"
             )}
           >
             {isSubmitting ? (
@@ -268,7 +268,7 @@ export default function EnquiryForm({
             ) : (
               <>
                 <span>Send Enquiry Message</span>
-                <span className="flex size-6 items-center justify-center rounded-xl bg-primary-foreground/10 transition-transform duration-300 group-hover:translate-x-1">
+                <span className="flex size-6 items-center justify-center rounded-xl bg-primary-foreground/15 transition-transform duration-300 group-hover:translate-x-1">
                   <ArrowRightIcon className="size-3 stroke-[2.5]" />
                 </span>
               </>
@@ -280,7 +280,7 @@ export default function EnquiryForm({
   )
 
   if (compact) {
-    return <div className="p-3">{formBody}</div>
+    return <div className="w-full p-1 sm:p-2">{formBody}</div>
   }
 
   return (
