@@ -1,0 +1,60 @@
+================================================================================
+IPAGE Group - Full Stack Developer Intern Technical Assignment
+DroneTV AI Support & Lead Assistant - Web Application
+================================================================================
+
+Candidate Information:
+----------------------
+Candidate Name   : Wahidul Islam Sami
+Email            : wahidulislamsami5@gmail.com
+Role Applied     : Full Stack Developer Intern
+Submission Date  : October 2026
+
+GitHub Repository Details:
+--------------------------
+Repository URL   : https://github.com/wahidulsami/FullStack_Chatbot_Task_wahidul_sami
+Primary Branch   : main
+Clone URL (HTTPS): https://github.com/wahidulsami/FullStack_Chatbot_Task_wahidul_sami.git
+Clone URL (SSH)  : git@github.com:wahidulsami/FullStack_Chatbot_Task_wahidul_sami.git
+
+Repository Structure:
+---------------------
+- README.md      : Complete project description, features, tech stack,
+                   setup instructions, environment variables, database setup,
+                   REST API endpoints specification, and application screenshots.
+- client/        : React 19 + TypeScript + Vite + Tailwind CSS v4 frontend.
+- server/        : Express + TypeScript + MongoDB + Mongoose backend REST API.
+- docs/          : API documentation and video walkthrough script.
+- database/      : MongoDB connection configuration, schemas, and seed scripts.
+- screenshots/   : 11 high-resolution application screenshots.
+
+Commit History:
+---------------
+The repository maintains a clean, atomic, and meaningful commit history
+following conventional commit standards (feat, refactor, fix, docs).
+Commit history can be reviewed directly at:
+https://github.com/wahidulsami/FullStack_Chatbot_Task_wahidul_sami/commits/main
+
+Quick Start Commands:
+---------------------
+# 1. Clone the repository
+git clone https://github.com/wahidulsami/FullStack_Chatbot_Task_wahidul_sami.git
+cd FullStack_Chatbot_Task_wahidul_sami
+
+# 2. Install dependencies
+npm --prefix server install
+npm --prefix client install
+
+# 3. Configure environment variables (server/.env)
+cp .env.example server/.env
+
+# 4. Seed database (optional demo data)
+cd server && npm run seed:admin && npm run seed:demo -- --clean
+
+# 5. Run development servers
+# Terminal 1: Backend API (port 5000)
+cd server && npm run dev
+
+# Terminal 2: Frontend client (port 5173)
+cd client && npm run dev
+================================================================================
